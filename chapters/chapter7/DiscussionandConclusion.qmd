@@ -1,0 +1,152 @@
+---
+title: Discussion and Conclusion
+---
+
+This dissertation investigated the challenges and advancements in the
+fields of algorithm selection and parallel portfolio design methods.
+Through six interconnected chapters, we address critical gaps in
+existing approaches by offering novel contributions and insights. This
+research led to the development of innovative methods for solving
+combinatorial problems more effectively. The findings underscore the
+importance of bridging theoretical assumptions with practical
+implementations, particularly in the context of running solvers in
+parallel.
+
+One of the core contributions of this work is the empirical evaluation
+of the performance of parallel portfolios. Unlike most previous studies,
+which rely on theoretical or simulated performance, this research
+measured the actual observed performance of parallel portfolios. The
+analysis revealed that running multiple algorithms in parallel often
+incurs significant performance penalties due to resource contention,
+even when only a small number of algorithms are executed on the same
+machine. In contrast, algorithm selection methods that choose a single
+solver based on instance-specific predictions demonstrated better
+overall performance, despite inaccuracies in the predictions. This
+analysis highlighted the weaknesses of relying solely on parallel
+approaches or single-algorithm selection methods, paving the way for
+creating hybrid solutions.
+
+To address these limitations, a novel hybrid approach was introduced
+that combined algorithm selection with parallel execution. This method
+dynamically determines both the solvers and the number of solvers to run
+in parallel, based on predicted run-time distributions. Unlike
+traditional methods that use all available processors or a fixed number
+of solvers, the proposed approach intelligently adapts to different
+problem instances. It demonstrated substantial performance improvements
+on five different benchmarks and outperformed baseline methods and
+existing approaches in the literature. This method is simple and
+practical, making it highly useful because it relies on readily
+available information in algorithm selection frameworks. In addition,
+the tunable parameter $p_{\cap}$ enables the method to be customized for
+specific application domains, while its default generic value already
+provides strong performance.
+
+This dissertation also introduced variations of the hybrid method that
+focused on improving the metrics for solver selection. A key
+contribution was the development of a parallel portfolio selection
+approach based on the KL divergence formula, which measures how much an
+algorithm's prediction diverges from the best-predicted solver. This
+method offers a more reliable alternative to the original approach, as
+the optimal values of $kl$ were more consistent between different
+scenarios. In contrast, the adjustment of the joint probability
+threshold $p_{\cap}$ in the prediction distribution showed greater
+variability. While the original method outperformed the KL
+divergence-based variation in most cases, the latter proved beneficial
+in scenarios where the complexity of tuning $p_{\cap}$ presented
+challenges.
+
+The final chapter of this work analyzed the impact of training algorithm
+selectors using parallel data versus sequential data. Interestingly,
+models trained on sequential data consistently outperformed those
+trained on parallel data in most scenarios. While predictions from
+parallel data captured runtime overheads, sequential data models
+provided more accurate rankings and superior performance in portfolio
+selection tasks. This finding suggests that collecting parallel data may
+not be necessary for effective portfolio selection, as sequential data
+models remain robust and efficient even in parallel execution
+environments.
+
+## Limitations
+
+While this dissertation makes significant contributions, it acknowledges
+certain limitations. The methods were evaluated on specific problem
+scenarios and benchmarks, which might limit their applicability to other
+domains. Furthermore, reliance on particular performance models, such as
+random forest-based regressors, highlights the potential to explore
+alternative models or ensemble techniques that could offer improved
+uncertainty estimates. The variability in tuning thresholds across
+benchmarks also underscores the need for more generalized or automated
+parameter tuning methods, which could streamline the configuration
+process and enhance efficiency.
+
+Although advances proposed in this work and the literature mark
+considerable progress in the world of combinatorial optimization, the
+challenge is to turn them into practical solutions that work for a wide
+range of real-world needs. As noted in [@10.1007/978-3-319-27436-2_21],
+the use of portfolio methods and algorithm selection faces major
+challenges, especially because standardized datasets are often missing
+in some domains of problems. Without a common format, it becomes
+practically difficult to apply portfolio methods. Additionally, some
+combinatorial problems, such as hierarchical planning problems often
+represented in HDDL format, lack tools to extract the features necessary
+to train performance models. The available tool for extracting planning
+problem features is designed only for PDDL formats. Most of the research
+in this field has also been done in academic settings. Although this
+dissertation and similar studies show great progress in improving
+combinatorial problem solving, there is an urgent need to apply these
+methods to real-world areas such as bioinformatics, operations research,
+and software dependency resolution. Bringing these techniques into
+practical use will help tackle real-world problems and demonstrate their
+effectiveness in diverse scenarios.
+
+## Future Directions
+
+This research opens up several promising directions for future work. One
+key area is improving dynamic resource allocation methods for algorithm
+selection by incorporating adaptive techniques to optimize how solvers
+are executed. Furthermore, exploring alternative machine learning
+models, particularly those with better capabilities for estimating
+uncertainty, could further improve the performance of the solver
+selection. The results in Chapter 4 indicate that the RJ model excelled
+as a single algorithm selector, while the RI model performed better for
+portfolio selection. This difference is likely because the infinitesimal
+jackknife method used in the RI model provides more accurate uncertainty
+estimates than the Jackknife method used in the RJ model. These findings
+emphasize the need to focus on robust methods for estimating uncertainty
+to enhance both algorithm selection and portfolio design.
+
+Another clear direction for future research is to include parallel
+solvers. Although this work focuses on sequential solvers treated as
+black boxes and includes them in parallel portfolios, adding parallel
+solvers introduces both challenges and opportunities. One of the main
+challenges is figuring out how to allocate computational resources, such
+as deciding how many cores to assign to each parallel solver. Exploring
+strategies to effectively manage these resources could lead to better
+and more efficient portfolio designs.
+
+Another promising avenue for future research is applying the proposed
+approach to algorithm configuration and hyperparameter tuning.
+Currently, algorithms are typically configured for sequential settings,
+but it is important to study how these configured algorithms behave when
+executed in parallel. For example, does tuning an algorithm in a
+sequential environment result in reduced performance when it is run in
+parallel? Investigating this question could help refine tuning processes
+to achieve the best possible performance in parallel settings.
+Additionally, exploring how algorithm configurations perform in parallel
+environments could provide insights into optimizing performance and
+resource usage.
+
+Finally, a key goal is to extend the proposed methods to real-world
+challenges in domains such as bioinformatics, operations research, and
+software dependency resolution to validate their effectiveness and
+inspire further improvements. Future efforts could also focus on
+creating feature extraction tools for unsupported domains to expand the
+applicability of algorithm selection and portfolio optimization.
+
+In conclusion, this dissertation has contributed to the advancement of
+algorithm selection and parallel portfolio optimization, addressing
+important challenges and proposing practical solutions. Although much
+work remains to be done, the findings presented here provide a
+foundation for future research and practical applications. It is my hope
+that this work will inspire further advancements and help tackle
+combinatorial problems in meaningful ways.

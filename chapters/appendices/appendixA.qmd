@@ -1,0 +1,55 @@
+---
+title: Appendix
+---
+
+# Supporting Topics
+
+## Sub-Portfolio Selection Based on $p_{\cap}$
+
+Based on the discussion in Chapter Four, the optimal values of
+$p_{\cap}$ for IPC2018, MAXSAT19-UCMS, SAT11-INDU, SAT18-EXP, and
+SAT16-MAIN are 0.59, 0.55, 0.63, 0.81, and 0.33, respectively for
+regression random-forest performance model. In the following, some
+examples of the prediction distribution curves are plotted per scenario.
+Figure [1.1](#fig:appendix_ipc2018){reference-type="ref"
+reference="fig:appendix_ipc2018"} shows two instances from the IPC2018
+scenario, *nurikabe_p03.pddl* (left) and *caldera_p03.pddl* (right).
+Since the optimal value of $p_{\cap}$ for this scenario is 0.59, for
+each instance we choose the solvers whose overlap area with the minimum
+predicted solver is greater than 0.59. Based on this method, for
+*nurikabe_p03.pddl*, *blind*, *Delfi1*, *FDMS2*,
+*symbolic.bidirectional*, and *DecStar* will be chosen to run in
+parallel, while *blind* is the VBS and also the best predicted solver.
+For the *caldera_p03.pddl* instance, two solvers are selected: *Metis1*
+and *Metis2*. In this instance, the Virtual Best Solver (VBS) is also
+the blind solver, but the solver with the minimum predicted time is
+*Metis1*.
+
+The same situation exists with the MAXSAT19-UCMS scenario, where the
+optimal $p_{\cap}$ is 0.55.
+Figure [1.2](#fig:appendix_maxsat){reference-type="ref"
+reference="fig:appendix_maxsat"} shows that based on the optimal
+$p_{\cap}$ for the *wolfram72_9.wcnf* instance (left), the
+*UWrMaxSat.1.0*, *maxino2018* and *MaxHS* solvers should be selected.
+For this instance, *UWrMaxSat.1.0* is the best predicted solver, and
+*MaxHS*, which is included in the portfolio, is the actual best solver.
+For the *1bpi_2knt_gwcnft.wcnf* instance (right), all solvers except
+*MaxHS* are selected in the portfolio, and the VBS (Virtual Best Solver)
+*QMaxSAT2018* is included in the subportfolio. The same situation exists
+with the SAT scenarios; however, due to the large number of solvers in
+those scenarios, the plots are omitted here.
+
+<figure id="fig:appendix_ipc2018">
+<p><embed src="plots/nurikabe_p03.pddl.svg" style="width:49%"/> <embed
+src="plots/caldera_p03.pddl.svg" style="width:49%" /></p>
+<figcaption>Sub-portfolio selection for two example instances from
+IPC2018 based on the optimal \( p_{\cap} \) values</figcaption>
+</figure>
+
+<figure id="fig:appendix_maxsat">
+<p><embed src="plots/wolfram72_9.wcnf.svg" style="width:49%"/> <embed
+src="plots/1bpi_2knt_gwcnft.wcnf.svg" style="width:49%" /></p>
+<figcaption>Sub-portfolio selection for two example instances from
+MAXSAT19-UCMS based on the optimal <span
+class="math inline">p_{\cap}</span> values</figcaption>
+</figure>

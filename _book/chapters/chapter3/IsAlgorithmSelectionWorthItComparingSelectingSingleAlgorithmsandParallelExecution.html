@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>4&nbsp; Is Algorithm Selection Worth It? Comparing Selecting Single Algorithms and Parallel Execution – Dynamic Selection of Parallel Portfolio of Algorithms for Solving Combinatorial Problems</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../chapters/chapter4/AutomaticParallelPortfolioSelection.html" rel="next">
+<link href="../../chapters/chapter2/Background.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-8eef5ae80df721a84869b784b4d5419f.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-812d013f591176c02f613616752f8d70.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../chapters/chapter3/IsAlgorithmSelectionWorthItComparingSelectingSingleAlgorithmsandParallelExecution.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Is Algorithm Selection Worth It? Comparing Selecting Single Algorithms and Parallel Execution</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../../">Dynamic Selection of Parallel Portfolio of Algorithms for Solving Combinatorial Problems</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/haniyeka/dissertation-website" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../../Dynamic-Selection-of-Parallel-Portfolio-of-Algorithms-for-Solving-Combinatorial-Problems.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Abstract</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../chapters/chapter1/Introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../chapters/chapter2/Background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Background</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../chapters/chapter3/IsAlgorithmSelectionWorthItComparingSelectingSingleAlgorithmsandParallelExecution.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Is Algorithm Selection Worth It? Comparing Selecting Single Algorithms and Parallel Execution</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../chapters/chapter4/AutomaticParallelPortfolioSelection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Automatic Parallel Portfolio Selection</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../chapters/chapter5/RevisitingParallelPortfolioSelectionwithKLDivergence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Revisiting Parallel Portfolio Selection with KL Divergence</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../chapters/chapter6/ParallelPortfolioSelectionwithParallelDataTraining.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Parallel Portfolio Selection with Parallel Data Training</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../chapters/chapter7/DiscussionandConclusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Discussion and Conclusion</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../chapters/appendices/appendixA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Appendix</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract"><span class="header-section-number">4.1</span> Abstract</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">4.2</span> Introduction</a></li>
+  <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background"><span class="header-section-number">4.3</span> Background</a></li>
+  <li><a href="#experimental-setup" id="toc-experimental-setup" class="nav-link" data-scroll-target="#experimental-setup"><span class="header-section-number">4.4</span> Experimental Setup</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">4.5</span> Results</a></li>
+  <li><a href="#conclusions-and-future-work" id="toc-conclusions-and-future-work" class="nav-link" data-scroll-target="#conclusions-and-future-work"><span class="header-section-number">4.6</span> Conclusions and Future Work</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Is Algorithm Selection Worth It? Comparing Selecting Single Algorithms and Parallel Execution</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>The material of this chapter is based on the following publication:</p>
+<p>H. Kashgarani and L. Kotthoff, “Is algorithm selection worth it? comparing selecting single algorithms and parallel execution,” in <em>AAAI Workshop on Meta-Learning and MetaDL Challenge</em>, vol.&nbsp;140 of <em>Proceedings of Machine Learning Research</em>, pp.&nbsp;58–64, PMLR, 2021.</p>
+<p>This chapter provides an empirical evaluation of SAT18-EXP solver performance (from the SAT Competition 2018) when running in parallel with other solvers at different levels of parallelism. Using the collected data, we trained two performance models based on the solver’s sequential performance data and instance features. We then performed algorithm selection using these selectors to choose the best-predicted solver for each instance, comparing these results to running multiple solvers in parallel. The findings showed that algorithm selection is superior when many solvers run in parallel. The results in this chapter offer preliminary insights for this dissertation, highlighting the importance of selecting an instance-based subportfolio of solvers since, with fewer solvers, the overhead is minimal. The instance based subportfolio approach will be further developed in Chapter 4 and explored with variations in Chapter 5 and 6.</p>
+<section id="abstract" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="abstract"><span class="header-section-number">4.1</span> Abstract</h2>
+<p>For many practical problems, there is more than one algorithm or approach to solve them. Such algorithms often have complementary performance – where one fails, another performs well, and vice versa. Per-instance algorithm selection leverages this by employing portfolios of complementary algorithms to solve sets of difficult problems, choosing the most appropriate algorithm for each problem instance. However, this requires complex models to effect this selection and introduces overhead to compute the data needed for those models. On the other hand, even basic hardware is more than capable of running several algorithms in parallel. We investigate the tradeoff between selecting a single algorithm and running multiple in parallel and incurring a slowdown because of contention for shared resources. Our results indicate that algorithm selection is worth it, especially for large portfolios.</p>
+</section>
+<section id="introduction" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="introduction"><span class="header-section-number">4.2</span> Introduction</h2>
+<p>The performance of algorithms can vary significantly on different problem instances and there is no single algorithm that performs well in all cases. We can take advantage of such performance differences and create algorithm portfolios to combine the complementary strengths of different algorithms <span class="citation" data-cites="GOMES200143">(<a href="#ref-GOMES200143" role="doc-biblioref">C. Gomes and Selman 2001</a>)</span>. From this portfolio, we can choose the algorithm with the best performance for each problem instance – this is known as the algorithm selection problem <span class="citation" data-cites="Rice1976">(<a href="#ref-Rice1976" role="doc-biblioref">Rice 1976</a>)</span>. This is usually done by using machine learning methods and features extracted from the instances <span class="citation" data-cites="Kotthoff2014">(<a href="#ref-Kotthoff2014" role="doc-biblioref">Kotthoff 2014</a>)</span>. Like all machine learning models, such approaches to algorithm selection make mistakes and in some cases choose an algorithm that does not have optimal performance. We can avoid this by exploiting modern multi-core architectures and simply running all algorithms in the portfolio in parallel, see e.g. <span class="citation" data-cites="sunnycp2">(<a href="#ref-sunnycp2" role="doc-biblioref">Amadini, Gabbrielli, and Mauro 2015a</a>)</span>. While in theory optimal in terms of achieved performance, in practice contention for shared resources such as memory and caches reduces overall performance.</p>
+<p>We present, to the best of our knowledge, the first investigation into the practical implications of running a large number of algorithms in parallel. We show the trade-off between algorithm selection that chooses a single algorithm and exploiting parallel resources and demonstrate that simply running all algorithms in a portfolio in parallel is not a panacea.</p>
+</section>
+<section id="background" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="background"><span class="header-section-number">4.3</span> Background</h2>
+<p>Algorithm selection and other portfolio-based approaches have been applied in many areas of AI to improve performance. The first paper to introduce portfolios for solving hard AI problem considered a relatively simple parallel approach that executes all algorithms in the portfolio at the same time and stops them all as soon as the solution has been found by one <span class="citation" data-cites="Huberman1997">(<a href="#ref-Huberman1997" role="doc-biblioref">Huberman, Lukose, and Hogg 1997</a>)</span>. <span class="citation" data-cites="GOMES200143 Hamadi2009">(<a href="#ref-GOMES200143" role="doc-biblioref">C. Gomes and Selman 2001</a>; <a href="#ref-Hamadi2009" role="doc-biblioref">Hamadi, Jabbour, and Sais 2009</a>)</span> evaluate this strategy for stochastic algorithms and demonstrate that the variance of the time required to solve a problem decreases as the number of parallel runs increases.</p>
+<p>This led to further approaches that take advantage of parallel processing by having several algorithms work independently or in cooperation on a given problem instance. <span class="citation" data-cites="Yun">(<a href="#ref-Yun" role="doc-biblioref">Yun and Epstein 2012</a>)</span> construct algorithm portfolios for constraint satisfaction problems that are executed in parallel and show performance improvements for up to 16 processors, and <span class="citation" data-cites="sunnycp2">(<a href="#ref-sunnycp2" role="doc-biblioref">Amadini, Gabbrielli, and Mauro 2015a</a>)</span> propose parallel portfolios with a dynamic schedule for up to 8 cores. Similarly, <span class="citation" data-cites="10.5555/1661445.1661516">(<a href="#ref-10.5555/1661445.1661516" role="doc-biblioref">Bordeaux, Hamadi, and Samulowitz 2009</a>)</span> show that by splitting the search space into sub-spaces, constraint solving portfolio approaches can take advantage of as many as 128 processors to achieve performance improvements.</p>
+<p>For the Boolean satisfiability problem (SAT), simple static hand-crafted parallel portfolios have been studied by <span class="citation" data-cites="roussel2012">(<a href="#ref-roussel2012" role="doc-biblioref">Roussel 2012a</a>)</span> and <span class="citation" data-cites="wotzlawpfoliouzk">(<a href="#ref-wotzlawpfoliouzk" role="doc-biblioref">Wotzlaw et al. 2012</a>)</span> combined with a computed resource allocation for each solver. They employ a fixed selection of SAT solvers with good performance independently in parallel for a given number of cores. <span class="citation" data-cites="gagliolo2006dynamic">(<a href="#ref-gagliolo2006dynamic" role="doc-biblioref">Gagliolo and Schmidhuber 2006</a>)</span> introduce the dynamic algorithm portfolios that run a portfolio of algorithms with different shares of parallel processors along with an online time allocation learning approach. This includes a lifelong-learning approach in which the priority of algorithms is continually updated based on new runtime information. <span class="citation" data-cites="petrik2006learning">(<a href="#ref-petrik2006learning" role="doc-biblioref">Petrik and Zilberstein 2006</a>)</span> also propose a method for enhancing the performance of deterministic algorithms by running multiple algorithms in parallel for the same problem instance. <span class="citation" data-cites="3s Malitsky2012">(<a href="#ref-3s" role="doc-biblioref">Kadioglu et al. 2011</a>; <a href="#ref-Malitsky2012" role="doc-biblioref">Malitsky et al. 2012a</a>)</span> propose a more sophisticated approach. They select algorithms through an improved k-nearest-neighbor approach and use both dynamic and static scheduling for multiple algorithms from the portfolio to improve the chance that a particular problem instance will be solved within a time limit.</p>
+<p>Similarly, <span class="citation" data-cites="Marius2015">(<a href="#ref-Marius2015" role="doc-biblioref">M. Lindauer, Hoos, and Hutter 2015</a>)</span> investigate parallel portfolio selection, and <span class="citation" data-cites="aspeed">(<a href="#ref-aspeed" role="doc-biblioref">H. H. Hoos et al. 2015</a>)</span> propose an approach to optimally schedule algorithms from a portfolio using answer set programming, while <span class="citation" data-cites="Gonard2019">(<a href="#ref-Gonard2019" role="doc-biblioref">Gonard, Schoenauer, and Sebag 2019</a>)</span> take the simpler approach of running a small portfolio of algorithms in parallel for a short amount of time and using algorithm selection to tackle any problem instances that remain unsolved after that. To the best of our knowledge, all previous research has only simulated parallel execution without measuring the actual performance. We investigate the practical ramifications of running more than one algorithm in parallel.</p>
+</section>
+<section id="experimental-setup" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="experimental-setup"><span class="header-section-number">4.4</span> Experimental Setup</h2>
+<p>We run algorithms sequentially and with varying degrees of parallelism. We build and evaluate algorithm selection models for sequential execution to be able to compare selecting a single algorithm to run multiple in parallel. We measure performance in terms of penalized average runtime with factor 10 (PAR10) and misclassification penalty (MCP). The PAR10 score is the observed performance unless an algorithm timed out on a particular instance, when the timeout multiplied by the penalization factor is assumed as the runtime. The misclassification penalty is the difference between the performance of the algorithm that was run and the optimal algorithm on the same instance, i.e.&nbsp;it is always zero for the optimal algorithm.</p>
+<p>We compare to the virtual best solver (VBS), which is the optimal algorithm from the portfolio for each problem instance to solve (cumulative misclassification penalty zero), and the single best solver (SBS), which is the algorithm from the portfolio with the best average performance across the entire set of problem instances to solve. The performance of the overhead-free parallel portfolio corresponds to the VBS.</p>
+<p>We consider algorithms and problem instances from SAT, a popular application area for algorithm selection. We selected all 400 instances from the main track of the SAT Competition 2018 <span class="citation" data-cites="Heule2019">(<a href="#ref-Heule2019" role="doc-biblioref">Heule, Järvisalo, and Suda 2019</a>)</span> and computed their features using the SATzilla feature computation code <span class="citation" data-cites="satzilla">(<a href="#ref-satzilla" role="doc-biblioref">Xu et al. 2008</a>)</span>. We exclude 19 instances for which we were unable to extract features within two hours of computational time, for a total of 381 problem instances.</p>
+<p>Our solvers also come from the main track of the 2018 SAT competition; we consider all 39 submitted solvers for a total of 14,859 algorithm runs. We use the same time limit as in the SAT competition; 5000 CPU seconds for solving a single instance. However, we allowed 128 GB of RAM; more than five times what was allowed in the competition. During the parallel runs, the total amount of memory is shared among all running algorithms. We run the algorithms sequentially, 10 in parallel, 20 in parallel, 30 in parallel, and 32 in parallel to fully saturate a machine with 32 cores.</p>
+<p>We leverage the algorithm selection benchmark library ASlib <span class="citation" data-cites="BISCHL201641">(<a href="#ref-BISCHL201641" role="doc-biblioref">Bischl, Kerschke, et al. 2016</a>)</span> and the LLAMA algorithm selection toolkit <span class="citation" data-cites="LLAMA">(<a href="#ref-LLAMA" role="doc-biblioref">Kotthoff 2013</a>)</span> for our algorithm selection experiments. We build regression models that predict the performance of each algorithm in the portfolio individually and select the algorithm with the best-predicted performance, and pairwise regression models that predict the performance difference for each pair of algorithms and select the algorithm with the aggregated best performance difference. We removed constant-valued (and therefore irrelevant) instance features and imputed missing feature values as the mean over all non-missing values of the feature.</p>
+<p>For both regression and pairwise regression approaches, we use random forests as the base machine learning models. We tune their hyperparameters following <span class="citation" data-cites="BISCHL201641">(<a href="#ref-BISCHL201641" role="doc-biblioref">Bischl, Kerschke, et al. 2016</a>)</span>; we consider values of 10 to 200 for the <code>ntree</code> hyperparameter and 1 to 30 for <code>mtry</code>. We optimize the hyperparameters using random search with 250 iterations and perform a nested cross-validation with 10 external and three internal folds to ensure unbiased performance measurements. All other hyperparameters were left at their default values.</p>
+<div class="table*">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;"># parallel runs</th>
+<th style="text-align: center;"># timeouts</th>
+<th style="text-align: center;"># out of memory errors</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: center;">6982 (47%)</td>
+<td style="text-align: center;">0 (0%)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10</td>
+<td style="text-align: center;">10281 (69.19%)</td>
+<td style="text-align: center;">6 (0.04%)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">20</td>
+<td style="text-align: center;">11853 (79.77%)</td>
+<td style="text-align: center;">20 (0.13%)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">30</td>
+<td style="text-align: center;">12590 (84.73%)</td>
+<td style="text-align: center;">27 (0.18%)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">32</td>
+<td style="text-align: center;">12715 (85.57%)</td>
+<td style="text-align: center;">5 (0.03%)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="results" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="results"><span class="header-section-number">4.5</span> Results</h2>
+<div class="table*">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">metric</th>
+<th style="text-align: center;"># parallel runs</th>
+<th style="text-align: center;">VBS</th>
+<th style="text-align: center;">SBS</th>
+<th style="text-align: center;">regression</th>
+<th style="text-align: center;">pairwise regression</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">PAR10</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">9256.089</td>
+<td style="text-align: center;">17585.66</td>
+<td style="text-align: center;">13004.31</td>
+<td style="text-align: center;">12588.44</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">13062.16</td>
+<td style="text-align: center;">27251.34</td>
+<td style="text-align: center;">19888.25</td>
+<td style="text-align: center;">20410.18</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">17099.23</td>
+<td style="text-align: center;">33630.54</td>
+<td style="text-align: center;">25233.38</td>
+<td style="text-align: center;">24970.07</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">19970.29</td>
+<td style="text-align: center;">36498.11</td>
+<td style="text-align: center;">28628.15</td>
+<td style="text-align: center;">27317.29</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">32</td>
+<td style="text-align: center;">21674.1</td>
+<td style="text-align: center;">37285.5</td>
+<td style="text-align: center;">29937.23</td>
+<td style="text-align: center;">28888.24</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MCP</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1006.738</td>
+<td style="text-align: center;">441.0526</td>
+<td style="text-align: center;">379.5133</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1433.268</td>
+<td style="text-align: center;">684.2932</td>
+<td style="text-align: center;">733.7837</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1649.426</td>
+<td style="text-align: center;">811.264</td>
+<td style="text-align: center;">784.1721</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1645.936</td>
+<td style="text-align: center;">862.5388</td>
+<td style="text-align: center;">732.7824</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">32</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1556.284</td>
+<td style="text-align: center;">822.1427</td>
+<td style="text-align: center;">718.0386</td>
+</tr>
+</tbody>
+</table>
+</div>
+<figure id="fig:values" class="figure">
+<p>
+<img src="plots/PAR10.jpg" style="width:80.0%" alt="image" class="figure-img"><br> <img src="plots/MCP.jpg" style="width:80.0%" alt="image" class="figure-img">
+</p>
+<figcaption>
+Performance in terms of PAR10 score and misclassification penalty for different numbers of algorithms run in parallel. The VBS is the performance of the parallel portfolio; SBS is shown for comparison. The regression and pairwise regression bars show the performance of the respective algorithm selection models. We omit the plot for VBS performance in terms of MCP score as it is always zero by definition.
+</figcaption>
+</figure>
+<p>We first evaluate the effect the number of parallel runs has on what fraction of all algorithm runs is successful. Table&nbsp;<a href="#tab:errors" data-reference-type="ref" data-reference="tab:errors">[tab:errors]</a> shows the number and percentage of unsuccessful runs at each level of parallelism. With only one algorithm running at a time, 47% of runs fail with a timeout. This increases as more and more algorithms are run in parallel. Similarly, the number of runs that fail because they run out of memory increases, as more and more runs share the same amount of physical memory. This does not significantly affect the results though, as even in the worst-case much less than 1% of the total number of runs is affected. Parallel runs have a much more significant effect on the number of timeouts though – from 47% runs that exceeded the available time when only a single algorithm is running at a time, we see an increase to 85.57% of total runs when 32 algorithms are run in parallel. Altogether, 85.6% of runs either time out or run out of memory when 32 algorithms are running in parallel; a significant increase over running only a single algorithm.</p>
+<p>Table&nbsp;<a href="#tab:values" data-reference-type="ref" data-reference="tab:values">[tab:values]</a> and Figure&nbsp;<a href="#fig:values" data-reference-type="ref" data-reference="fig:values">1.1</a> show the performance we observed for all parallelism levels and approaches we consider. The PAR10 score for the VBS increases significantly as we increase the number of algorithms run in parallel; <span class="math inline">\(\approx\)</span><!-- -->41% from one to 10 parallel runs. Similarly, the score for the single best solver increases by <span class="math inline">\(\approx\)</span><!-- -->55% for the same interval. The PAR10 score is more than twice as high for 32 parallel runs compared to a single run for both VBS and SBS – contention for shared resources has a significant impact on the time it takes to solve a set of instances. A large contributor to the increase in PAR10 score is the increased number of unsuccessful runs because of timeouts or memory outs.</p>
+<p>We observe a similar decrease in performance as for the VBS and SBS for the algorithm selection approaches as the level of parallelism increases – in fact, we observe even steeper performance losses in the beginning, with <span class="math inline">\(\approx\)</span><!-- -->53% performance decrease from one algorithm to 10 for regression models and <span class="math inline">\(\approx\)</span><!-- -->62% for pairwise regression models in terms of PAR10. However, we observe a performance increase for both approaches (lower MCP scores) when going from 30 algorithms run in parallel to 32, and a performance increase for pairwise regression model when going from 20 algorithms run in parallel to 30. It is unclear what exactly causes this performance increase; it is likely that the machine learning task that underlies the selection process becomes easier as more algorithms lose competitiveness because of timeouts and memory limits.</p>
+<figure id="fig:percentage" class="figure">
+<img src="plots/percentage.jpg" style="width:80.0%" class="figure-img">
+<figcaption>
+Percentage increase in terms of PAR10 score for running different numbers of algorithms in parallel compared to algorithm selector performance for choosing a single algorithm. For example, an increase of 100% means that running the algorithms in parallel doubles the PAR10 score over selecting a single algorithm.
+</figcaption>
+</figure>
+<p>Our results show that algorithm selection for choosing a single algorithm to run can beat parallel execution in practice for a large number of solvers. Figure&nbsp;<a href="#fig:percentage" data-reference-type="ref" data-reference="fig:percentage">1.2</a> shows that the performance of both the regression and pairwise regression algorithm selection approaches are better than the VBS for any level of parallelism beyond running a single algorithm. Both in terms of PAR10 and MCP, algorithm selection is always better than the single best solver. When using all 32 cores we have available, the VBS becomes more than 66% worse than the regression algorithm selection approach and more than 72% worse than the pairwise regression algorithm selection approach. Even when running only 10 algorithms at the same time (and assuming that we know which 10 of the 39 total algorithms to run to maximize performance), the VBS is more than 0.4% and 3% worse than regression and pairwise regression approaches, respectively.</p>
+<p>While the overhead-free parallel portfolio promises optimal performance, in theory, we clearly see that in practice this is not the case – contention for shared resources and physical limits of the machine that is used to run the algorithms has a significant detrimental effect on performance. Even though algorithm selection models are not perfect, they outperform actual parallel portfolios in terms of observed performance even for a relatively small number of algorithms run in parallel.</p>
+</section>
+<section id="conclusions-and-future-work" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="conclusions-and-future-work"><span class="header-section-number">4.6</span> Conclusions and Future Work</h2>
+<p>We investigated the actual observed performance of parallel portfolios, in contrast to their theoretical performance that is usually used in the literature. We found that running even a relatively small number of algorithms in parallel on the same machine can have a significant negative impact on overall performance. Algorithm selection on the other hand chooses only a single algorithm and is able to achieve better overall performance, even though its predictions are not perfect and it does not always choose the algorithm with the best performance for solving a given problem instance.</p>
+<p>An obvious avenue for future work is a hybrid approach to what we present here, where instead of a single algorithm several are chosen to run in parallel. Existing literature proposes a multitude of methods for doing so; however, none of these approaches have been evaluated as in the investigation we present here – by actually running more than one algorithm in parallel and observing the performance rather than simulating this based on the performance observed when only a single algorithm is run at a time. In addition, there is scope for developing new approaches for dynamic resource allocation for algorithm selection.</p>
+
+
+<!-- -->
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-conf/sat/AignerBKNP13" class="csl-entry" role="listitem">
+Aigner, Martin, Armin Biere, Christoph M. Kirsch, Aina Niemetz, and Mathias Preiner. 2013a. <span>“Analysis of Portfolio-Style Parallel <span>SAT</span> Solving on Current Multi-Core Architectures.”</span> In <em><span>POS-13.</span> Fourth Pragmatics of <span>SAT</span> Workshop, a Workshop of the <span>SAT</span> 2013 Conference, July 7, 2013, Helsinki, Finland</em>, edited by Daniel Le Berre, 29:28–40. EPiC Series in Computing. EasyChair. <a href="https://doi.org/10.29007/73N4">https://doi.org/10.29007/73N4</a>.
+</div>
+<div id="ref-biere" class="csl-entry" role="listitem">
+Aigner, Martin, Armin Biere, Christoph M Kirsch, Aina Niemetz, and Mathias Preiner. 2013b. <span>“<span class="nocase">Analysis of Portfolio-Style Parallel SAT Solving on Current Multi-Core Architectures</span>.”</span> <em>POS@ SAT</em> 29: 28–40.
+</div>
+<div id="ref-ali2006learning" class="csl-entry" role="listitem">
+Ali, Shawkat, and Kate A Smith. 2006. <span>“On Learning Algorithm Selection for Classification.”</span> <em>Applied Soft Computing</em> 6 (2): 119–38.
+</div>
+<div id="ref-sunny" class="csl-entry" role="listitem">
+Amadini, Roberto, Maurizio Gabbrielli, and Jacopo Mauro. 2014. <span>“<span>SUNNY:</span> A Lazy Portfolio Approach for Constraint Solving.”</span> <em>Theory Pract. Log. Program.</em> 14 (4-5): 509–24. <a href="https://doi.org/10.1017/S1471068414000179">https://doi.org/10.1017/S1471068414000179</a>.
+</div>
+<div id="ref-sunnycp2" class="csl-entry" role="listitem">
+———. 2015a. <span>“<span class="nocase">A Multicore Tool for Constraint Solving</span>.”</span> In <em>Proceedings of the 24th International Conference on Artificial Intelligence</em>, 232–38.
+</div>
+<div id="ref-10.1007/978-3-319-27436-2_21" class="csl-entry" role="listitem">
+———. 2015b. <span>“<span class="nocase">Why CP Portfolio Solvers Are (under)Utilized? Issues and Challenges</span>.”</span> In <em>Logic-Based Program Synthesis and Transformation</em>, edited by Moreno Falaschi, 349–64. Cham: Springer International Publishing.
+</div>
+<div id="ref-sunnycp" class="csl-entry" role="listitem">
+———. 2018. <span>“SUNNY-CP and the MiniZinc Challenge.”</span> <em>Theory and Practice of Logic Programming</em> 18 (1): 81–96. <a href="https://doi.org/10.1017/S1471068417000205">https://doi.org/10.1017/S1471068417000205</a>.
+</div>
+<div id="ref-arbelaez2009online" class="csl-entry" role="listitem">
+Arbelaez, Alejandro, Youssef Hamadi, and Michele Sebag. 2009. <span>“<span class="nocase">Online heuristic selection in constraint programming</span>.”</span>
+</div>
+<div id="ref-maxsat2019" class="csl-entry" role="listitem">
+Bacchus, Fahiem, Matti Jarvisalo, and Ruben Martins. 2019. <em>MaxSAT Evaluation 2019</em>.
+</div>
+<div id="ref-sat2021" class="csl-entry" role="listitem">
+Balyo, Tomas, Nils Froleyks, Marijn Heule, Markus Iser, Matti Järvisalo, and Martin Suda, eds. 2021. <em>Proceedings of SAT Competition 2021: Solver and Benchmark Descriptions</em>. Anthology or special issue. Department of Computer Science Report Series b. Department of Computer Science Report Series B. <a href="http://hdl.handle.net/10138/333647">http://hdl.handle.net/10138/333647</a>.
+</div>
+<div id="ref-sat2023" class="csl-entry" role="listitem">
+Balyo, Tomas, Marijn Heule, Markus Iser, Matti Järvisalo, and Martin Suda, eds. 2023. <em>Proceedings of SAT Competition 2023: Solver, Benchmark and Proof Checker Descriptions</em>. Anthology or special issue. Department of Computer Science, Helsinki Institute for Information Technology, Constraint Reasoning; Optimization research group / Matti Järvisalo.
+</div>
+<div id="ref-balyo_sat_2017" class="csl-entry" role="listitem">
+Balyo, Tomáš, Marijn J H Heule, and Matti Järvisalo. 2017. <span>“<span>SAT</span> <span>Competition</span> 2017 <span>Solver</span> and <span>Benchmark</span> <span>Descriptions</span>.”</span> <em>Proceedings of SAT COMPETITION 2017</em>, 14–15.
+</div>
+<div id="ref-10.1145/3411564.3411646" class="csl-entry" role="listitem">
+Batista dos Santos, Vânia, and Luiz Henrique de Campos Merschmann. 2020. <span>“Metalearning Applied to Multi-Label Text Classification.”</span> In <em>Proceedings of the XVI Brazilian Symposium on Information Systems</em>. SBSI ’20. New York, NY, USA: Association for Computing Machinery. <a href="https://doi.org/10.1145/3411564.3411646">https://doi.org/10.1145/3411564.3411646</a>.
+</div>
+<div id="ref-plingeling" class="csl-entry" role="listitem">
+Biere, Armin. 2012. <span>“<span class="nocase">Lingeling and friends entering the SAT challenge 2012</span>.”</span> <em>Department of Computer Science Series of Publications B</em>, January, 33–34.
+</div>
+<div id="ref-Biere2013LingelingPA" class="csl-entry" role="listitem">
+———. 2013. <span>“<span class="nocase">Lingeling, Plingeling and Treengeling Entering the SAT Competition 2013</span>.”</span> In. <a href="https://api.semanticscholar.org/CorpusID:972178">https://api.semanticscholar.org/CorpusID:972178</a>.
+</div>
+<div id="ref-biere2009conflict" class="csl-entry" role="listitem">
+Biere, Armin, Marijn Heule, Hans van Maaren, and Toby Walsh. 2009. <span>“Conflict-Driven Clause Learning Sat Solvers.”</span> <em>Handbook of Satisfiability, Frontiers in Artificial Intelligence and Applications</em>, 131–53.
+</div>
+<div id="ref-series/faia/336" class="csl-entry" role="listitem">
+———, eds. 2021. <em>Handbook of Satisfiability - Second Edition</em>. Vol. 336. Frontiers in Artificial Intelligence and Applications. <span>IOS</span> Press. <a href="https://doi.org/10.3233/FAIA336">https://doi.org/10.3233/FAIA336</a>.
+</div>
+<div id="ref-BISCHL201641" class="csl-entry" role="listitem">
+Bischl, Bernd, Pascal Kerschke, Lars Kotthoff, Marius Lindauer, Yuri Malitsky, Alexandre Fréchette, Holger Hoos, et al. 2016. <span>“<span>ASlib</span>: A Benchmark Library for Algorithm Selection.”</span> <em>Artificial Intelligence</em> 237: 41–58.
+</div>
+<div id="ref-mlr" class="csl-entry" role="listitem">
+Bischl, Bernd, Michel Lang, Lars Kotthoff, Julia Schiffner, Jakob Richter, Erich Studerus, Giuseppe Casalicchio, and Zachary M. Jones. 2016. <span>“<span class="nocase">mlr: Machine Learning in R</span>.”</span> <em>Journal of Machine Learning Research</em> 17 (170): 1–5. <a href="https://jmlr.org/papers/v17/15-066.html">https://jmlr.org/papers/v17/15-066.html</a>.
+</div>
+<div id="ref-Bischl2024" class="csl-entry" role="listitem">
+Bischl, Bernd, Raphael Sonabend, Lars Kotthoff, and Michel Lang, eds. 2024. <em><span class="nocase">Applied Machine Learning Using <span class="nocase">m</span>lr3 in <span>R</span></span></em>. CRC Press. <a href="https://mlr3book.mlr-org.com">https://mlr3book.mlr-org.com</a>.
+</div>
+<div id="ref-bishop2006pattern" class="csl-entry" role="listitem">
+Bishop, Christopher M, and Nasser M Nasrabadi. 2006. <em>Pattern Recognition and Machine Learning</em>. Vol. 4. 4. Springer.
+</div>
+<div id="ref-10.5555/1661445.1661516" class="csl-entry" role="listitem">
+Bordeaux, Lucas, Youssef Hamadi, and Horst Samulowitz. 2009. <span>“<span class="nocase">Experiments with Massively Parallel Constraint Solving</span>.”</span> In <em>Proceedings of the 21st International Jont Conference on Artifical Intelligence</em>, 443–48. IJCAI’09. San Francisco, CA, USA: Morgan Kaufmann Publishers Inc.
+</div>
+<div id="ref-brazdil2022metalearning" class="csl-entry" role="listitem">
+Brazdil, P., J. N. van Rijn, C. Soares, and J. Vanschoren. 2022. <em>Metalearning: Applications to Automated Machine Learning and Data Mining</em>. Cognitive Technologies. Springer International Publishing. <a href="https://books.google.com/books?id=zDcOzgEACAAJ">https://books.google.com/books?id=zDcOzgEACAAJ</a>.
+</div>
+<div id="ref-randomforest" class="csl-entry" role="listitem">
+Breiman, Leo. 2001. <span>“Random Forests.”</span> <em>Machine Learning</em> 45: 5–32.
+</div>
+<div id="ref-brighton2002advances" class="csl-entry" role="listitem">
+Brighton, Henry, and Chris Mellish. 2002. <span>“Advances in Instance Selection for Instance-Based Learning Algorithms.”</span> <em>Data Mining and Knowledge Discovery</em> 6: 153–72.
+</div>
+<div id="ref-Carchrae2005APPLYINGML" class="csl-entry" role="listitem">
+Carchrae, Tom, and J. Christopher Beck. 2005. <span>“<span class="nocase">Applying Machine Learning to Low-Knowledge Control of Optimization Algorithms</span>.”</span> <em>Computational Intelligence</em> 21. <a href="https://api.semanticscholar.org/CorpusID:7953876">https://api.semanticscholar.org/CorpusID:7953876</a>.
+</div>
+<div id="ref-10.1007/978-3-319-32034-2_25" class="csl-entry" role="listitem">
+Cárdenas-Montes, Miguel. 2016. <span>“<span class="nocase">Evaluating the Difficulty of Instances of the Travelling Salesman Problem in the Nearby of the Optimal Solution Based on Random Walk Exploration</span>.”</span> In <em>Hybrid Artificial Intelligent Systems</em>, edited by Francisco Martínez-Álvarez, Alicia Troncoso, Héctor Quintián, and Emilio Corchado, 299–310. Cham: Springer International Publishing.
+</div>
+<div id="ref-cenamor2013learning" class="csl-entry" role="listitem">
+Cenamor, Isabel, Tomás De La Rosa, and Fernando Fernández. 2013. <span>“Learning Predictive Models to Configure Planning Portfolios.”</span> In <em>Proceedings of the 4th Workshop on Planning and Learning (ICAPS-PAL 2013)</em>, 14–22. Citeseer.
+</div>
+<div id="ref-10.5555/3013589.3013607" class="csl-entry" role="listitem">
+———. 2016. <span>“<span class="nocase">The IBaCoP planning system: instance-based configured portfolios</span>.”</span> <em>J. Artif. Int. Res.</em> 56 (1): 657–91.
+</div>
+<div id="ref-cenamor2014ibacop" class="csl-entry" role="listitem">
+Cenamor, Isabel, Tomás de la Rosa, Fernando Fernández, et al. 2014. <span>“<span class="nocase">IBACOP and IBACOP2 planner</span>.”</span> <em>IPC 2014 Planner Abstracts</em>, 35–38.
+</div>
+<div id="ref-FlorinaOpneMP" class="csl-entry" role="listitem">
+Ciorba, Florina M., Ali Mohammed, Jonas H. Müller Korndörfer, and Ahmed Eleliemy. 2023. <span>“<span class="nocase">Automated Scheduling Algorithm Selection in OpenMP</span>.”</span> In <em>2023 22nd International Symposium on Parallel and Distributed Computing (ISPDC)</em>, 106–9. <a href="https://doi.org/10.1109/ISPDC59212.2023.00025">https://doi.org/10.1109/ISPDC59212.2023.00025</a>.
+</div>
+<div id="ref-collautti2013snnap" class="csl-entry" role="listitem">
+Collautti, Marco, Yuri Malitsky, Deepak Mehta, and Barry O’Sullivan. 2013. <span>“<span class="nocase">SNNAP: Solver-based nearest neighbor for algorithm portfolios</span>.”</span> In <em>Machine Learning and Knowledge Discovery in Databases: European Conference, ECML PKDD 2013, Prague, Czech Republic, September 23-27, 2013, Proceedings, Part III 13</em>, 435–50. Springer.
+</div>
+<div id="ref-11390_1234673" class="csl-entry" role="listitem">
+Collevati, M., Agostino Dovier, and A. Formisano. 2022. <span>“<span class="nocase">GPU Parallelism for SAT Solving Heuristics</span>.”</span> CEUR-WS.
+</div>
+<div id="ref-4555925" class="csl-entry" role="listitem">
+Davis, John D., Zhangxi Tan, Fang Yu, and Lintao Zhang. 2008. <span>“A Practical Reconfigurable Hardware Accelerator for Boolean Satisfiability Solvers.”</span> In <em>2008 45th ACM/IEEE Design Automation Conference</em>, 780–85. <a href="https://doi.org/10.1145/1391469.1391669">https://doi.org/10.1145/1391469.1391669</a>.
+</div>
+<div id="ref-10.1145/368273.368557" class="csl-entry" role="listitem">
+Davis, Martin, George Logemann, and Donald Loveland. 1962. <span>“A Machine Program for Theorem-Proving.”</span> <em>Commun. ACM</em> 5 (7): 394–97. <a href="https://doi.org/10.1145/368273.368557">https://doi.org/10.1145/368273.368557</a>.
+</div>
+<div id="ref-10.4108/ICST.SIMUTOOLS2009.5659" class="csl-entry" role="listitem">
+Ewald, Roland, Adelinde M. Uhrmacher, and Kaustav Saha. 2010. <span>“Data Mining for Simulation Algorithm Selection.”</span> In. ICST. <a href="https://doi.org/10.4108/ICST.SIMUTOOLS2009.5659">https://doi.org/10.4108/ICST.SIMUTOOLS2009.5659</a>.
+</div>
+<div id="ref-Fawcett_Vallati_Hutter_Hoffmann_Hoos_Leyton-Brown_2014" class="csl-entry" role="listitem">
+Fawcett, Chris, Mauro Vallati, Frank Hutter, Jörg Hoffmann, Holger Hoos, and Kevin Leyton-Brown. 2014. <span>“<span class="nocase">Improved Features for Runtime Prediction of Domain-Independent Planners</span>.”</span> <em>Proceedings of the International Conference on Automated Planning and Scheduling</em> 24 (1): 355–59. <a href="https://doi.org/10.1609/icaps.v24i1.13680">https://doi.org/10.1609/icaps.v24i1.13680</a>.
+</div>
+<div id="ref-FROLEYKS2021103572" class="csl-entry" role="listitem">
+Froleyks, Nils, Marijn Heule, Markus Iser, Matti Järvisalo, and Martin Suda. 2021. <span>“<span>SAT Competition 2020</span>.”</span> <em>Artificial Intelligence</em> 301: 103572. https://doi.org/<a href="https://doi.org/10.1016/j.artint.2021.103572">https://doi.org/10.1016/j.artint.2021.103572</a>.
+</div>
+<div id="ref-gagliolo2006dynamic" class="csl-entry" role="listitem">
+Gagliolo, Matteo, and Jürgen Schmidhuber. 2006. <span>“<span class="nocase">Dynamic algorithm portfolios</span>.”</span> <em>Annals of Mathematics and Artificial Intelligence</em> 47: 3–4.
+</div>
+<div id="ref-10.1007/978-3-642-20895-9_40" class="csl-entry" role="listitem">
+Gebser, Martin, Roland Kaminski, Benjamin Kaufmann, Torsten Schaub, Marius Thomas Schneider, and Stefan Ziller. 2011. <span>“<span class="nocase">A Portfolio Solver for Answer Set Programming: Preliminary Report</span>.”</span> In <em>Logic Programming and Nonmonotonic Reasoning</em>, edited by James P. Delgrande and Wolfgang Faber, 352–57. Berlin, Heidelberg: Springer Berlin Heidelberg.
+</div>
+<div id="ref-GEBSER_2019" class="csl-entry" role="listitem">
+GEBSER, MARTIN, MARCO MARATEA, and FRANCESCO RICCA. 2019. <span>“<span class="nocase">The Seventh Answer Set Programming Competition: Design and Results</span>.”</span> <em>Theory and Practice of Logic Programming</em> 20 (2): 176–204. <a href="https://doi.org/10.1017/s1471068419000061">https://doi.org/10.1017/s1471068419000061</a>.
+</div>
+<div id="ref-gerevini2005plan" class="csl-entry" role="listitem">
+Gerevini, Alfonso, and Derek Long. 2005. <span>“<span class="nocase">Plan constraints and preferences in PDDL3</span>.”</span> Technical Report 2005-08-07, Department of Electronics for Automation&nbsp;….
+</div>
+<div id="ref-journals/jsat/GilFS09" class="csl-entry" role="listitem">
+Gil, Luı́s, Paulo F. Flores, and Luı́s Miguel Silveira. 2009. <span>“<span class="nocase">PMSat: a parallel version of MiniSAT</span>.”</span> <em>J. Satisf. Boolean Model. Comput.</em> 6 (1-3): 71–98. <a href="https://doi.org/10.3233/SAT190063">https://doi.org/10.3233/SAT190063</a>.
+</div>
+<div id="ref-Gomes1997AlgorithmPD" class="csl-entry" role="listitem">
+Gomes, Carla Pedro, and Bart Selman. 1997. <span>“Algorithm Portfolio Design: Theory Vs. Practice.”</span> <em>ArXiv</em> abs/1302.1541. <a href="https://api.semanticscholar.org/CorpusID:8512615">https://api.semanticscholar.org/CorpusID:8512615</a>.
+</div>
+<div id="ref-GOMES200143" class="csl-entry" role="listitem">
+Gomes, Carla, and Bart Selman. 2001. <span>“Algorithm Portfolios.”</span> <em>Artificial Intelligence</em> 126: 43–62.
+</div>
+<div id="ref-Gonard2019" class="csl-entry" role="listitem">
+Gonard, François, Marc Schoenauer, and Michèle Sebag. 2019. <span>“<span class="nocase">Algorithm Selector and Prescheduler in the ICON Challenge</span>.”</span> In <em>Bioinspired Heuristics for Optimization</em>, 203–19. Springer International Publishing.
+</div>
+<div id="ref-10.1145/1497561.1497576" class="csl-entry" role="listitem">
+Gulati, Kanupriya, Suganth Paul, Sunil P. Khatri, Srinivas Patil, and Abhijit Jas. 2009. <span>“<span class="nocase">FPGA-based hardware acceleration for Boolean satisfiability</span>.”</span> <em>ACM Trans. Des. Autom. Electron. Syst.</em> 14 (2). <a href="https://doi.org/10.1145/1497561.1497576">https://doi.org/10.1145/1497561.1497576</a>.
+</div>
+<div id="ref-sotingAS" class="csl-entry" role="listitem">
+Guo, Haipeng, and William H. Hsu. 2003. <span>“Algorithm Selection for Sorting and Probabilistic Inference: A Machine Learning-Based Approach.”</span> PhD thesis, USA: Kansas State University.
+</div>
+<div id="ref-guo_learning-based_2005" class="csl-entry" role="listitem">
+———. 2005. <span>“A <span>Learning</span>-<span>Based</span> <span>Algorithm</span> <span>Selection</span> <span>Meta</span>-<span>Reasoner</span> for the <span>Real</span>-<span>Time</span> <span>MPE</span> <span>Problem</span>.”</span> In <em><span>AI</span> 2004: <span>Advances</span> in <span>Artificial</span> <span>Intelligence</span></em>, edited by Geoffrey I. Webb and Xinghuo Yu, 307–18. Berlin, Heidelberg: Springer. <a href="https://doi.org/10.1007/978-3-540-30549-1_28">https://doi.org/10.1007/978-3-540-30549-1_28</a>.
+</div>
+<div id="ref-Hamadi2009" class="csl-entry" role="listitem">
+Hamadi, Youssef, Said Jabbour, and Lakhdar Sais. 2009. <span>“<span class="nocase">ManySAT: a Parallel SAT Solver</span>.”</span> <em>Journal on Satisfiability, Boolean Modeling and Computation</em>. <a href="https://doi.org/10.3233/sat190070">https://doi.org/10.3233/sat190070</a>.
+</div>
+<div id="ref-Heule2019" class="csl-entry" role="listitem">
+Heule, Marijn J. H., Matti Järvisalo, and Martin Suda. 2019. <span>“<span>SAT Competition 2018</span>.”</span> <em>Journal on Satisfiability, Boolean Modeling and Computation</em>. <a href="https://doi.org/10.3233/sat190120">https://doi.org/10.3233/sat190120</a>.
+</div>
+<div id="ref-10.1007/978-3-642-16242-8_37" class="csl-entry" role="listitem">
+Hölldobler, Steffen, Norbert Manthey, and Ari Saptawijaya. 2010. <span>“<span>Improving Resource-Unaware SAT Solvers</span>.”</span> In <em>Logic for Programming, Artificial Intelligence, and Reasoning</em>, edited by Christian G. Fermüller and Andrei Voronkov, 519–34. Berlin, Heidelberg: Springer Berlin Heidelberg.
+</div>
+<div id="ref-holldobler_short_2011" class="csl-entry" role="listitem">
+Hölldobler, Steffen, Norbert Manthey, Van Hau Nguyen, Julian Stecklina, and Peter Steinke. 2011. <span>“<span class="nocase">A short overview on modern parallel <span>SAT</span>-solvers</span>.”</span> <em>ICACSIS 2011 - 2011 International Conference on Advanced Computer Science and Information Systems, Proceedings</em>, no. January: 201–6.
+</div>
+<div id="ref-aspeed" class="csl-entry" role="listitem">
+Hoos, Holger H., Roland Kaminski, Marius Thomas Lindauer, and Torsten Schaub. 2015. <span>“<span class="nocase">aspeed: Solver scheduling via answer set programming</span>.”</span> <em><span>TPLP</span></em> 15 (1): 117–42.
+</div>
+<div id="ref-HOOS2005257" class="csl-entry" role="listitem">
+Hoos, Holger H., and Thomas Stützle. 2005. <span>“Propositional Satisfiability and Constraint Satisfaction.”</span> In <em>Stochastic Local Search</em>, 257–312. The Morgan Kaufmann Series in Artificial Intelligence. San Francisco: Morgan Kaufmann. https://doi.org/<a href="https://doi.org/10.1016/B978-155860872-6/50023-8">https://doi.org/10.1016/B978-155860872-6/50023-8</a>.
+</div>
+<div id="ref-hoos2014claspfolio2advancesalgorithm" class="csl-entry" role="listitem">
+Hoos, Holger, Marius Lindauer, and Torsten Schaub. 2014. <span>“Claspfolio 2: Advances in Algorithm Selection for Answer Set Programming.”</span> <a href="https://arxiv.org/abs/1405.1520">https://arxiv.org/abs/1405.1520</a>.
+</div>
+<div id="ref-howe2000exploiting" class="csl-entry" role="listitem">
+Howe, Adele E, Eric Dahlman, Christopher Hansen, Michael Scheetz, and Anneliese Von Mayrhauser. 2000. <span>“Exploiting Competitive Planner Performance.”</span> In <em>Recent Advances in AI Planning: 5th European Conference on Planning, ECP’99, Durham, UK, September 8-10, 1999. Proceedings 5</em>, 62–72. Springer.
+</div>
+<div id="ref-HU201268" class="csl-entry" role="listitem">
+Hu, Mengqi, Teresa Wu, and Jeffery D. Weir. 2012. <span>“An Intelligent Augmentation of Particle Swarm Optimization with Multiple Adaptive Methods.”</span> <em>Information Sciences</em> 213: 68–83. https://doi.org/<a href="https://doi.org/10.1016/j.ins.2012.05.020">https://doi.org/10.1016/j.ins.2012.05.020</a>.
+</div>
+<div id="ref-Huberman1997" class="csl-entry" role="listitem">
+Huberman, Bernardo A., Rajan M. Lukose, and Tad Hogg. 1997. <span>“<span class="nocase">An economics approach to hard computational problems</span>.”</span> <em>Science</em> 275 (5296): 51–54. <a href="https://doi.org/10.1126/science.275.5296.51">https://doi.org/10.1126/science.275.5296.51</a>.
+</div>
+<div id="ref-hutter2019automated" class="csl-entry" role="listitem">
+Hutter, Frank, Lars Kotthoff, and Joaquin Vanschoren, eds. 2019. <em>Automated Machine Learning - Methods, Systems, Challenges</em>. Springer.
+</div>
+<div id="ref-10.1007/978-3-319-09584-4_4" class="csl-entry" role="listitem">
+Hutter, Frank, Manuel López-Ibáñez, Chris Fawcett, Marius Lindauer, Holger H. Hoos, Kevin Leyton-Brown, and Thomas Stützle. 2014. <span>“<span class="nocase">AClib: A Benchmark Library for Algorithm Configuration</span>.”</span> In <em>Learning and Intelligent Optimization</em>, edited by Panos M. Pardalos, Mauricio G. C. Resende, Chrysafis Vogiatzis, and Jose L. Walteros, 36–40. Cham: Springer International Publishing.
+</div>
+<div id="ref-HUTTER201479" class="csl-entry" role="listitem">
+Hutter, Frank, Lin Xu, Holger H. Hoos, and Kevin Leyton-Brown. 2014. <span>“Algorithm Runtime Prediction: Methods &amp; Evaluation.”</span> <em>Artificial Intelligence</em> 206: 79–111. https://doi.org/<a href="https://doi.org/10.1016/j.artint.2013.10.003">https://doi.org/10.1016/j.artint.2013.10.003</a>.
+</div>
+<div id="ref-hyvarinen2012approaches" class="csl-entry" role="listitem">
+Hyvarinen, Antti E. J., and Christoph M. Wintersteiger. 2012. <span>“<span class="nocase">Approaches for Multi-Core Propagation in Clause Learning Satisfiability Solvers</span>.”</span> MSR-TR-2012-47. <a href="https://www.microsoft.com/en-us/research/publication/approaches-for-multi-core-propagation-in-clause-learning-satisfiability-solvers/">https://www.microsoft.com/en-us/research/publication/approaches-for-multi-core-propagation-in-clause-learning-satisfiability-solvers/</a>.
+</div>
+<div id="ref-10.1007/978-3-540-85110-3_11" class="csl-entry" role="listitem">
+Hyvärinen, Antti E. J., Tommi Junttila, and Ilkka Niemelä. 2008. <span>“Strategies for Solving <span>SAT</span> in Grids by Randomized Search.”</span> In <em>Intelligent Computer Mathematics</em>, edited by Serge Autexier, John Campbell, Julio Rubio, Volker Sorge, Masakazu Suzuki, and Freek Wiedijk, 125–40. Berlin, Heidelberg: Springer Berlin Heidelberg.
+</div>
+<div id="ref-10.1007/978-3-642-16242-8_27" class="csl-entry" role="listitem">
+———. 2010. <span>“<span class="nocase">Partitioning SAT Instances for Distributed Solving</span>.”</span> In <em>Logic for Programming, Artificial Intelligence, and Reasoning</em>, edited by Christian G. Fermüller and Andrei Voronkov, 372–86. Berlin, Heidelberg: Springer Berlin Heidelberg.
+</div>
+<div id="ref-10.1007/978-3-642-31612-8_17" class="csl-entry" role="listitem">
+Hyvärinen, Antti E. J., and Norbert Manthey. 2012. <span>“<span>Designing Scalable Parallel SAT Solvers</span>.”</span> In <em>Theory and Applications of Satisfiability Testing – SAT 2012</em>, edited by Alessandro Cimatti and Roberto Sebastiani, 214–27. Berlin, Heidelberg: Springer Berlin Heidelberg.
+</div>
+<div id="ref-3s" class="csl-entry" role="listitem">
+Kadioglu, Serdar, Yuri Malitsky, Ashish Sabharwal, Horst Samulowitz, and Meinolf Sellmann. 2011. <span>“<span class="nocase">Algorithm selection and scheduling</span>.”</span> <em>Lecture Notes in Computer Science (Including Subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics)</em> 6876 LNCS: 454–69. <a href="https://doi.org/10.1007/978-3-642-23786-7_35">https://doi.org/10.1007/978-3-642-23786-7_35</a>.
+</div>
+<div id="ref-kadioglu2010isac" class="csl-entry" role="listitem">
+Kadioglu, Serdar, Yuri Malitsky, Meinolf Sellmann, and Kevin Tierney. 2010. <span>“ISAC–Instance-Specific Algorithm Configuration.”</span> In <em>ECAI 2010</em>, 751–56. IOS Press.
+</div>
+<div id="ref-kadiogluwin" class="csl-entry" role="listitem">
+Kadıoglu, Serdar, Yuri Malitsky, and Meinolf Sellmann. n.d. <span>“<span class="nocase">How to Win Gold at a SAT Competition Without Writing a SAT Solver</span>.”</span>
+</div>
+<div id="ref-Karp1972" class="csl-entry" role="listitem">
+Karp, Richard M. 1972. <span>“Reducibility Among Combinatorial Problems.”</span> In <em>Complexity of Computer Computations: Proceedings of a Symposium on the Complexity of Computer Computations, Held March 20–22, 1972, at the IBM Thomas j. Watson Research Center, Yorktown Heights, New York, and Sponsored by the Office of Naval Research, Mathematics Program, IBM World Trade Corporation, and the IBM Research Mathematical Sciences Department</em>, edited by Raymond E. Miller, James W. Thatcher, and Jean D. Bohlinger, 85–103. Boston, MA: Springer US. <a href="https://doi.org/10.1007/978-1-4684-2001-2_9">https://doi.org/10.1007/978-1-4684-2001-2_9</a>.
+</div>
+<div id="ref-pmlr-v140-kashgarani21a" class="csl-entry" role="listitem">
+Kashgarani, Haniye, and Lars Kotthoff. 2021. <span>“<span class="nocase">Is Algorithm Selection Worth It? Comparing Selecting Single Algorithms and Parallel Execution</span>.”</span> In <em>AAAI Workshop on Meta-Learning and MetaDL Challenge</em>, 140:58–64. Proceedings of Machine Learning Research. PMLR. <a href="https://proceedings.mlr.press/v140/kashgarani21a.html">https://proceedings.mlr.press/v140/kashgarani21a.html</a>.
+</div>
+<div id="ref-kashgarani2023automatic" class="csl-entry" role="listitem">
+———. 2023. <span>“<span>Automatic Parallel Portfolio Selection</span>.”</span> In <em>ECAI 2023</em>, 1215–22. IOS Press.
+</div>
+<div id="ref-10.1162/evco_a_00242" class="csl-entry" role="listitem">
+Kerschke, Pascal, Holger H. Hoos, Frank Neumann, and Heike Trautmann. 2019. <span>“<span class="nocase">Automated Algorithm Selection: Survey and Perspectives</span>.”</span> <em>Evolutionary Computation</em> 27 (1): 3–45. <a href="https://doi.org/10.1162/evco_a_00242">https://doi.org/10.1162/evco_a_00242</a>.
+</div>
+<div id="ref-10.1162/evco_a_00215" class="csl-entry" role="listitem">
+Kerschke, Pascal, Lars Kotthoff, Jakob Bossek, Holger H. Hoos, and Heike Trautmann. 2018. <span>“<span class="nocase">Leveraging TSP Solver Complementarity through Machine Learning</span>.”</span> <em>Evolutionary Computation</em> 26 (4): 597–620. <a href="https://doi.org/10.1162/evco_a_00215">https://doi.org/10.1162/evco_a_00215</a>.
+</div>
+<div id="ref-KOCAMAZ201394" class="csl-entry" role="listitem">
+Kocamaz, Uğur Erkin. 2013. <span>“Increasing the Efficiency of Quicksort Using a Neural Network Based Algorithm Selection Model.”</span> <em>Information Sciences</em> 229: 94–105. https://doi.org/<a href="https://doi.org/10.1016/j.ins.2012.11.014">https://doi.org/10.1016/j.ins.2012.11.014</a>.
+</div>
+<div id="ref-LLAMA" class="csl-entry" role="listitem">
+Kotthoff, Lars. 2013. <span>“<span class="nocase">LLAMA: Leveraging Learning to Automatically Manage Algorithms</span>.”</span> <em>CoRR</em> abs/1306.1031. <a href="http://arxiv.org/abs/1306.1031">http://arxiv.org/abs/1306.1031</a>.
+</div>
+<div id="ref-Kotthoff2014" class="csl-entry" role="listitem">
+———. 2014. <span>“<span class="nocase">Algorithm selection for combinatorial search problems: A survey</span>.”</span> <em>AI Magazine</em> 35 (3): 48–69.
+</div>
+<div id="ref-KL" class="csl-entry" role="listitem">
+Kullback, S., and R. A. Leibler. 1951. <span>“<span class="nocase">On Information and Sufficiency</span>.”</span> <em>The Annals of Mathematical Statistics</em> 22 (1): 79–86. <a href="http://www.jstor.org/stable/2236703">http://www.jstor.org/stable/2236703</a>.
+</div>
+<div id="ref-erdem_ku__2024" class="csl-entry" role="listitem">
+Kuş, Erdem, Özgür Akgün, Nguyen Dang, and Ian Miguel. 2024. <span>“<span>Frugal Algorithm Selection</span>.”</span> Cornell University. <a href="https://doi.org/ 10.48550/arxiv.2405.11059 ">https://doi.org/ 10.48550/arxiv.2405.11059 </a>.
+</div>
+<div id="ref-lefrioux" class="csl-entry" role="listitem">
+Le Frioux, Ludovic. 2019. <span>“<span class="nocase">Towards more efficient parallel SAT solving</span>.”</span> Theses, <span>Sorbonne Universit<span>é</span></span>. <a href="https://theses.hal.science/tel-03030122">https://theses.hal.science/tel-03030122</a>.
+</div>
+<div id="ref-10.1145/3637225" class="csl-entry" role="listitem">
+Leeson, Will, and Matthew B. Dwyer. 2024. <span>“<span class="nocase">Algorithm Selection for Software Verification Using Graph Neural Networks</span>.”</span> <em>ACM Trans. Softw. Eng. Methodol.</em> 33 (3). <a href="https://doi.org/10.1145/3637225">https://doi.org/10.1145/3637225</a>.
+</div>
+<div id="ref-10.5555/1630659.1630927" class="csl-entry" role="listitem">
+Leyton-Brown, Kevin, Eugene Nudelman, Galen Andrew, Jim McFadden, and Yoav Shoham. 2003. <span>“<span class="nocase">A portfolio approach to algorithm selection</span>.”</span> In <em>Proceedings of the 18th International Joint Conference on Artificial Intelligence</em>, 1542–43. IJCAI’03. San Francisco, CA, USA: Morgan Kaufmann Publishers Inc.
+</div>
+<div id="ref-10.1007/3-540-46135-3_37" class="csl-entry" role="listitem">
+Leyton-Brown, Kevin, Eugene Nudelman, and Yoav Shoham. 2002. <span>“<span class="nocase">Learning the Empirical Hardness of Optimization Problems: The Case of Combinatorial Auctions</span>.”</span> In <em>Principles and Practice of Constraint Programming - CP 2002</em>, edited by Pascal Van Hentenryck, 556–72. Berlin, Heidelberg: Springer Berlin Heidelberg.
+</div>
+<div id="ref-NIPS2014_7fb8ceb3" class="csl-entry" role="listitem">
+Lieder, Falk, Dillon Plunkett, Jessica B Hamrick, Stuart J Russell, Nicholas Hay, and Tom Griffiths. 2014. <span>“Algorithm Selection by Rational Metareasoning as a Model of Human Strategy Selection.”</span> In <em>Advances in Neural Information Processing Systems</em>, edited by Z. Ghahramani, M. Welling, C. Cortes, N. Lawrence, and K. Q. Weinberger. Vol. 27. Curran Associates, Inc. <a href="https://proceedings.neurips.cc/paper_files/paper/2014/file/7fb8ceb3bd59c7956b1df66729296a4c-Paper.pdf">https://proceedings.neurips.cc/paper_files/paper/2014/file/7fb8ceb3bd59c7956b1df66729296a4c-Paper.pdf</a>.
+</div>
+<div id="ref-flexfolio" class="csl-entry" role="listitem">
+Lindauer, Marius, Rolf-David Bergdoll, and Frank Hutter. 2016. <span>“An Empirical Study of Per-Instance Algorithm Scheduling.”</span> In <em>Proceedings of the Tenth International Conference on Learning and Intelligent Optimization, LION’16, in: Lecture Notes in Computer Science</em>, 253–59. Springer; Springer.
+</div>
+<div id="ref-lindauer2015autofolio" class="csl-entry" role="listitem">
+Lindauer, Marius, Holger H Hoos, Frank Hutter, and Torsten Schaub. 2015. <span>“Autofolio: An Automatically Configured Algorithm Selector.”</span> <em>Journal of Artificial Intelligence Research</em> 53: 745–78.
+</div>
+<div id="ref-Marius2015" class="csl-entry" role="listitem">
+Lindauer, Marius, Holger Hoos, and Frank Hutter. 2015. <span>“<span class="nocase">From sequential algorithm selection to parallel portfolio selection</span>.”</span> In <em>International Conference on Learning and Intelligent Optimization</em>, 1–16. Springer.
+</div>
+<div id="ref-LINDAUER2017272" class="csl-entry" role="listitem">
+Lindauer, Marius, Holger Hoos, Kevin Leyton-Brown, and Torsten Schaub. 2017. <span>“Automatic Construction of Parallel Portfolios via Algorithm Configuration.”</span> <em>Artificial Intelligence</em> 244: 272–90. https://doi.org/<a href="https://doi.org/10.1016/j.artint.2016.05.004">https://doi.org/10.1016/j.artint.2016.05.004</a>.
+</div>
+<div id="ref-pmlr-v79-lindauer17a" class="csl-entry" role="listitem">
+Lindauer, Marius, Jan N. van Rijn, and Lars Kotthoff. 2017. <span>“Open Algorithm Selection Challenge 2017: Setup and Scenarios.”</span> In <em>Proceedings of the Open Algorithm Selection Challenge</em>, 79:1–7. PMLR. <a href="https://proceedings.mlr.press/v79/lindauer17a.html">https://proceedings.mlr.press/v79/lindauer17a.html</a>.
+</div>
+<div id="ref-LINDAUER201986" class="csl-entry" role="listitem">
+Lindauer, Marius, Jan N. van Rijn, and Lars Kotthoff. 2019. <span>“<span class="nocase">The algorithm selection competitions 2015 and 2017</span>.”</span> <em>Artificial Intelligence</em> 272: 86–100. https://doi.org/<a href="https://doi.org/10.1016/j.artint.2018.10.004">https://doi.org/10.1016/j.artint.2018.10.004</a>.
+</div>
+<div id="ref-lindauer2014algorithm" class="csl-entry" role="listitem">
+Lindauer, T Marius. 2014. <span>“<span class="nocase">Algorithm selection, scheduling and configuration of Boolean constraint solvers</span>.”</span> PhD thesis, Universit<span>ä</span>t Potsdam.
+</div>
+<div id="ref-Lissovoi_Oliveto_Warwicker_2019" class="csl-entry" role="listitem">
+Lissovoi, Andrei, Pietro S. Oliveto, and John Alasdair Warwicker. 2019. <span>“<span class="nocase">On the Time Complexity of Algorithm Selection Hyper-Heuristics for Multimodal Optimisation</span>.”</span> <em>Proceedings of the AAAI Conference on Artificial Intelligence</em> 33 (01): 2322–29. <a href="https://doi.org/10.1609/aaai.v33i01.33012322">https://doi.org/10.1609/aaai.v33i01.33012322</a>.
+</div>
+<div id="ref-genericportfolio" class="csl-entry" role="listitem">
+Liu, Wenwen, Shiu Yin Yuen, and Chi Sung. 2022. <span>“A Generic Method to Compose an Algorithm Portfolio with a Problem Set of Unknown Distribution.”</span> <em>Memetic Computing</em> 14 (September): 1–18. <a href="https://doi.org/10.1007/s12293-022-00367-8">https://doi.org/10.1007/s12293-022-00367-8</a>.
+</div>
+<div id="ref-10194439" class="csl-entry" role="listitem">
+Lukac, Martin, and Michitaka Kameyama. 2023. <span>“<span>Verification Based Algorithm Selection</span>.”</span> In <em>2023 International Conference on Information and Digital Technologies (IDT)</em>, 25–30. <a href="https://doi.org/10.1109/IDT59031.2023.10194439">https://doi.org/10.1109/IDT59031.2023.10194439</a>.
+</div>
+<div id="ref-yuri_malitsky__2014" class="csl-entry" role="listitem">
+Malitsky, Yuri, Barry O’Sullivan, Alessandro Previti, and Joao Marques-Silva. 2014. <span>“<span class="nocase">A Portfolio Approach to Enumerating Minimal Correction Subsets for Satisfiability Problems</span>.”</span> In, 368–76. Springer, Cham. <a href="https://doi.org/ 10.1007/978-3-319-07046-9_26 ">https://doi.org/ 10.1007/978-3-319-07046-9_26 </a>.
+</div>
+<div id="ref-p3s" class="csl-entry" role="listitem">
+Malitsky, Yuri, Ashish Sabharwal, Horst Samulowitz, and Meinolf Sellmann. 2012b. <span>“<span class="nocase">Parallel SAT Solver Selection and Scheduling</span>.”</span> In <em>Proceedings of the 18th International Conference on Principles and Practice of Constraint Programming - Volume 7514</em>, 512–26. Springer-Verlag.
+</div>
+<div id="ref-Malitsky2012" class="csl-entry" role="listitem">
+———. 2012a. <span>“<span class="nocase">Parallel SAT solver selection and scheduling</span>.”</span> <em>Lecture Notes in Computer Science (Including Subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics)</em> 7514 LNCS: 512–26. <a href="https://doi.org/10.1007/978-3-642-33558-7_38">https://doi.org/10.1007/978-3-642-33558-7_38</a>.
+</div>
+<div id="ref-10.5555/2540128.2540217" class="csl-entry" role="listitem">
+———. 2013. <span>“<span class="nocase">Algorithm portfolios based on cost-sensitive hierarchical clustering</span>.”</span> In <em>Proceedings of the Twenty-Third International Joint Conference on Artificial Intelligence</em>, 608–14. IJCAI ’13. Beijing, China: AAAI Press.
+</div>
+<div id="ref-manthey2011parallel" class="csl-entry" role="listitem">
+Manthey, Norbert. 2011. <span>“<span class="nocase">Parallel SAT solving-using more cores</span>.”</span> <em>Pragmatics of SAT (POS’11)</em>.
+</div>
+<div id="ref-maratea2014multi" class="csl-entry" role="listitem">
+Maratea, Marco, Luca Pulina, and Francesco Ricca. 2014. <span>“A Multi-Engine Approach to Answer-Set Programming.”</span> <em>Theory and Practice of Logic Programming</em> 14 (6): 841–68.
+</div>
+<div id="ref-Balyo2016" class="csl-entry" role="listitem">
+Martins, Ruben, Matti Jarvisalo, and Fahiem Bacchus. 2016. <em>Proceedings of <span>SAT</span> Competition 2016 : Solver and Benchmark Descriptions</em>. University of Helsinki.
+</div>
+<div id="ref-Maturana2012" class="csl-entry" role="listitem">
+Maturana, Jorge, Álvaro Fialho, Frédéric Saubion, Marc Schoenauer, Frédéric Lardeux, and Michèle Sebag. 2012. <span>“Adaptive Operator Selection and Management in Evolutionary Algorithms.”</span> In <em>Autonomous Search</em>, 161–89. Springer. <a href="https://doi.org/10.1007/978-3-642-21434-9_7">https://doi.org/10.1007/978-3-642-21434-9_7</a>.
+</div>
+<div id="ref-5547116" class="csl-entry" role="listitem">
+Meyer, Quirin, Fabian Schönfeld, Marc Stamminger, and Rolf Wanka. 2010. <span>“<span class="nocase">3-SAT on CUDA: Towards a massively parallel SAT solver</span>.”</span> In <em>2010 International Conference on High Performance Computing &amp; Simulation</em>, 306–13. <a href="https://doi.org/10.1109/HPCS.2010.5547116">https://doi.org/10.1109/HPCS.2010.5547116</a>.
+</div>
+<div id="ref-GCP" class="csl-entry" role="listitem">
+Musliu, Nysret, and Martin Schwengerer. 2013. <span>“<span class="nocase">Algorithm Selection for the Graph Coloring Problem</span>.”</span> In <em>Learning and Intelligent Optimization</em>, edited by Giuseppe Nicosia and Panos Pardalos, 389–403. Berlin, Heidelberg: Springer Berlin Heidelberg.
+</div>
+<div id="ref-osti_2223030" class="csl-entry" role="listitem">
+Nichols, Daniel, Harshitha Menon, Todd Gamblin, and Abhinav Bhatele. 2023. <span>“<span class="nocase">A Probabilistic Approach To Selecting Build Configurations in Package Managers</span>,”</span> November. <a href="https://doi.org/10.2172/2223030">https://doi.org/10.2172/2223030</a>.
+</div>
+<div id="ref-10.1007/978-3-540-30201-8_33" class="csl-entry" role="listitem">
+Nudelman, Eugene, Kevin Leyton-Brown, Holger H. Hoos, Alex Devkar, and Yoav Shoham. n.d. <span>“Understanding Random <span>SAT</span>: Beyond the Clauses-to-Variables Ratio.”</span> In <em>Principles and Practice of Constraint Programming – CP 2004</em>, edited by Mark Wallace, 438–52. Berlin, Heidelberg: Springer Berlin Heidelberg.
+</div>
+<div id="ref-cphydra" class="csl-entry" role="listitem">
+O’Mahony, Eoin, Emmanuel Hebrard, Alan Holland, Conor Nugent, and Barry O’Sullivan. 2008. <span>“Using Case-Based Reasoning in an Algorithm Portfolio for Constraint Solving.”</span> In <em>Irish Conference on Artificial Intelligence and Cognitive Science</em>, 210–16. Proceedings of the 19th Irish Conference on Artificial Intelligence; Cognitive Science.
+</div>
+<div id="ref-10.1007/978-3-030-72016-2_8" class="csl-entry" role="listitem">
+Osama, Muhammad, Anton Wijs, and Armin Biere. 2021. <span>“<span class="nocase">SAT Solving with GPU Accelerated Inprocessing</span>.”</span> In <em>Tools and Algorithms for the Construction and Analysis of Systems</em>, edited by Jan Friso Groote and Kim Guldstrand Larsen, 133–51. Cham: Springer International Publishing.
+</div>
+<div id="ref-10.1007/s10703-023-00432-z" class="csl-entry" role="listitem">
+———. 2023. <span>“<span class="nocase">Certified SAT solving with GPU accelerated inprocessing</span>.”</span> <em>Form. Methods Syst. Des.</em> 62 (1–3): 79–118. <a href="https://doi.org/10.1007/s10703-023-00432-z">https://doi.org/10.1007/s10703-023-00432-z</a>.
+</div>
+<div id="ref-10.5555/525" class="csl-entry" role="listitem">
+Pearl, Judea. 1984. <em>Heuristics: Intelligent Search Strategies for Computer Problem Solving</em>. USA: Addison-Wesley Longman Publishing Co., Inc.
+</div>
+<div id="ref-petrik2006learning" class="csl-entry" role="listitem">
+Petrik, Marek, and Shlomo Zilberstein. 2006. <span>“<span class="nocase">Learning parallel portfolios of algorithms</span>.”</span> <em>Annals of Mathematics and Artificial Intelligence</em> 48 (1-2): 85–106.
+</div>
+<div id="ref-10.1007/978-3-030-80223-3_31" class="csl-entry" role="listitem">
+Pimpalkhare, Nikhil, Federico Mora, Elizabeth Polgreen, and Sanjit A. Seshia. 2021. <span>“<span>MedleySolver: Online SMT Algorithm Selection</span>.”</span> In <em>Theory and Applications of Satisfiability Testing – SAT 2021</em>, edited by Chu-Min Li and Felip Manyà, 453–70. Cham: Springer International Publishing.
+</div>
+<div id="ref-pmlr-v188-pulatov22a" class="csl-entry" role="listitem">
+Pulatov, Damir, Marie Anastacio, Lars Kotthoff, and Holger Hoos. 2022. <span>“<span class="nocase">Opening the Black Box: Automated Software Analysis for Algorithm Selection</span>.”</span> In <em>Proceedings of the First International Conference on Automated Machine Learning</em>, 188:6/1–18. PMLR. <a href="https://proceedings.mlr.press/v188/pulatov22a.html">https://proceedings.mlr.press/v188/pulatov22a.html</a>.
+</div>
+<div id="ref-PULINA2019224" class="csl-entry" role="listitem">
+Pulina, Luca, and Martina Seidl. 2019. <span>“The 2016 and 2017 <span>QBF</span> Solvers Evaluations (<span>QBFEVAL’16</span> and <span>QBFEVAL’17</span>).”</span> <em>Artificial Intelligence</em> 274: 224–48. https://doi.org/<a href="https://doi.org/10.1016/j.artint.2019.04.002">https://doi.org/10.1016/j.artint.2019.04.002</a>.
+</div>
+<div id="ref-10.1007/3-540-44614-1_50" class="csl-entry" role="listitem">
+Redekopp, M., and A. Dandalis. 2000. <span>“<span class="nocase">A Parallel Pipelined SAT Solver for FPGA’s</span>.”</span> In <em>Field-Programmable Logic and Applications: The Roadmap to Reconfigurable Computing</em>, edited by Reiner W. Hartenstein and Herbert Grünbacher, 462–68. Berlin, Heidelberg: Springer Berlin Heidelberg.
+</div>
+<div id="ref-Rice1976" class="csl-entry" role="listitem">
+Rice, John R. 1976. <span>“<span>The Algorithm Selection Problem</span>.”</span> <em>Advances in Computers</em>. <a href="https://doi.org/10.1016/S0065-2458(08)60520-3">https://doi.org/10.1016/S0065-2458(08)60520-3</a>.
+</div>
+<div id="ref-10.1007/s10515-020-00270-x" class="csl-entry" role="listitem">
+Richter, Cedric, Eyke Hüllermeier, Marie-Christine Jakobs, and Heike Wehrheim. 2020. <span>“Algorithm Selection for Software Validation Based on Graph Kernels.”</span> <em>Automated Software Engg.</em> 27 (1–2): 153–86. <a href="https://doi.org/10.1007/s10515-020-00270-x">https://doi.org/10.1007/s10515-020-00270-x</a>.
+</div>
+<div id="ref-roberts2008makes" class="csl-entry" role="listitem">
+Roberts, Mark, Adele E Howe, Brandon Wilson, and Marie desJardins. 2008. <span>“<span>What Makes Planners Predictable?</span>”</span> In <em>ICAPS</em>, 288–95.
+</div>
+<div id="ref-ppfolio" class="csl-entry" role="listitem">
+Roussel, Olivier. 2012b. <span>“Description of Ppfolio (2011).”</span> <em>Proc. SAT Challenge</em>, 46.
+</div>
+<div id="ref-roussel2012" class="csl-entry" role="listitem">
+———. 2012a. <span>“Description of Ppfolio (2011).”</span> <em>Proc. SAT Challenge</em>, 46.
+</div>
+<div id="ref-shavit_et_al" class="csl-entry" role="listitem">
+Shavit, Hadar, and Holger H. Hoos. 2024. <span>“<span class="nocase">Revisiting SATZilla Features in 2024</span>.”</span> In <em>27th International Conference on Theory and Applications of Satisfiability Testing (SAT 2024)</em>, edited by Supratik Chakraborty and Jie-Hong Roland Jiang, 305:27:1–26. Leibniz International Proceedings in Informatics (LIPIcs). Dagstuhl, Germany: Schloss Dagstuhl – Leibniz-Zentrum f<span>ü</span>r Informatik. <a href="https://doi.org/10.4230/LIPIcs.SAT.2024.27">https://doi.org/10.4230/LIPIcs.SAT.2024.27</a>.
+</div>
+<div id="ref-10.1007/11752578_46" class="csl-entry" role="listitem">
+Singer, Daniel, and Alain Vagner. 2006. <span>“<span class="nocase">Parallel Resolution of the Satisfiability Problem (SAT) with OpenMP and MPI</span>.”</span> In <em>Parallel Processing and Applied Mathematics</em>, edited by Roman Wyrzykowski, Jack Dongarra, Norbert Meyer, and Jerzy Waśniewski, 380–88. Berlin, Heidelberg: Springer Berlin Heidelberg.
+</div>
+<div id="ref-SINZ2001205" class="csl-entry" role="listitem">
+Sinz, Carsten, Wolfgang Blochinger, and Wolfgang Küchlin. 2001. <span>“<span class="nocase">PaSAT — Parallel SAT-Checking with Lemma Exchange: Implementation and Applications</span>.”</span> <em>Electronic Notes in Discrete Mathematics</em> 9: 205–16. https://doi.org/<a href="https://doi.org/10.1016/S1571-0653(04)00323-3">https://doi.org/10.1016/S1571-0653(04)00323-3</a>.
+</div>
+<div id="ref-10.1109/CEC55065.2022.9870417" class="csl-entry" role="listitem">
+Sitaru, Ioana, and Madalina Raschip. 2022. <span>“<span class="nocase">Algorithm Selection for Combinatorial Packing Problems</span>.”</span> In <em>2022 IEEE Congress on Evolutionary Computation (CEC)</em>, 1–8. Padua, Italy: IEEE Press. <a href="https://doi.org/10.1109/CEC55065.2022.9870417">https://doi.org/10.1109/CEC55065.2022.9870417</a>.
+</div>
+<div id="ref-SMITHMILES2012875" class="csl-entry" role="listitem">
+Smith-Miles, Kate, and Leo Lopes. 2012. <span>“Measuring Instance Difficulty for Combinatorial Optimization Problems.”</span> <em>Computers &amp; Operations Research</em> 39 (5): 875–89. https://doi.org/<a href="https://doi.org/10.1016/j.cor.2011.07.006">https://doi.org/10.1016/j.cor.2011.07.006</a>.
+</div>
+<div id="ref-10.5120/ijca2016910726" class="csl-entry" role="listitem">
+Somshubra Majumdar, Kunal Kukreja, Ishaan Jain. 2016. <span>“<span class="nocase">AdaSort: Adaptive Sorting using Machine Learning</span>.”</span> <em>International Journal of Computer Applications</em> 145 (12): 12–17. <a href="https://doi.org/ 10.5120/ijca2016910726 ">https://doi.org/ 10.5120/ijca2016910726 </a>.
+</div>
+<div id="ref-Stuckey_Feydy_Schutt_Tack_Fischer_2014" class="csl-entry" role="listitem">
+Stuckey, Peter J., Thibaut Feydy, Andreas Schutt, Guido Tack, and Julien Fischer. 2014. <span>“<span>The MiniZinc Challenge 2008–2013</span>.”</span> <em>AI Magazine</em> 35 (2): 55–60. <a href="https://doi.org/10.1609/aimag.v35i2.2539">https://doi.org/10.1609/aimag.v35i2.2539</a>.
+</div>
+<div id="ref-taitler-et-al-aimag2024" class="csl-entry" role="listitem">
+Taitler, Ayal, Ron Alford, Joan Espasa, Gregor Behnke, Daniel Fišer, Michael Gimelfarb, Florian Pommerening, et al. 2024. <span>“The 2023 <span>International Planning Competition</span>.”</span> <em>AI Magazine</em>, 1–17.
+</div>
+<div id="ref-Tange2011a" class="csl-entry" role="listitem">
+Tange, O. 2011. <span>“<span>GNU Parallel - The Command-Line Power Tool</span>.”</span> <em>The USENIX Magazine</em> 36 (1): 42–47. https://doi.org/<a href="http://dx.doi.org/10.5281/zenodo.16303">http://dx.doi.org/10.5281/zenodo.16303</a>.
+</div>
+<div id="ref-10.1145/2487575.2487629" class="csl-entry" role="listitem">
+Thornton, Chris, Frank Hutter, Holger H. Hoos, and Kevin Leyton-Brown. 2013. <span>“<span class="nocase">Auto-WEKA: combined selection and hyperparameter optimization of classification algorithms</span>.”</span> In <em>Proceedings of the 19th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</em>, 847–55. KDD ’13. New York, NY, USA: Association for Computing Machinery. <a href="https://doi.org/10.1145/2487575.2487629">https://doi.org/10.1145/2487575.2487629</a>.
+</div>
+<div id="ref-jtom1286288" class="csl-entry" role="listitem">
+Torağay, Oğuz, and Shaheen Pouya. 2023. <span>“<span class="nocase">A Monte Carlo simulation approach to the gap-time relationship in solving scheduling problem</span>.”</span> <em>Journal of Turkish Operations Management</em> 7 (1): 1579–90. <a href="https://doi.org/10.56554/jtom.1286288">https://doi.org/10.56554/jtom.1286288</a>.
+</div>
+<div id="ref-tornede2023algorithm" class="csl-entry" role="listitem">
+Tornede, Alexander, Lukas Gehring, Tanja Tornede, Marcel Wever, and Eyke Hüllermeier. 2023. <span>“<span class="nocase">Algorithm selection on a meta level</span>.”</span> <em>Machine Learning</em> 112 (4): 1253–86.
+</div>
+<div id="ref-10.5555/3007337.3007474" class="csl-entry" role="listitem">
+Valenzano, Richard, Hootan Nakhost, Martin Müller, Jonathan Schaeffer, and Nathan Sturtevant. 2012. <span>“ArvandHerd: Parallel Planning with a Portfolio.”</span> In <em>Proceedings of the 20th European Conference on Artificial Intelligence</em>, 786–91. ECAI’12. NLD: IOS Press.
+</div>
+<div id="ref-Vanschoren2019" class="csl-entry" role="listitem">
+Vanschoren, Joaquin. 2019. <span>“Meta-Learning.”</span> In <em>Automated Machine Learning: Methods, Systems, Challenges</em>, edited by Frank Hutter, Lars Kotthoff, and Joaquin Vanschoren, 35–61. Cham: Springer International Publishing. <a href="https://doi.org/10.1007/978-3-030-05318-5_2">https://doi.org/10.1007/978-3-030-05318-5_2</a>.
+</div>
+<div id="ref-explainability" class="csl-entry" role="listitem">
+Visentin, Andrea, Aodh Ó Gallchóir, Jens Kärcher, and Herbert Meyr. 2024. <span>“<span class="nocase">Explainable Algorithm Selection for the Capacitated Lot Sizing Problem</span>.”</span> In <em>Integration of Constraint Programming, Artificial Intelligence, and Operations Research</em>, edited by Bistra Dilkina, 243–52. Cham: Springer Nature Switzerland.
+</div>
+<div id="ref-wager2014confidence" class="csl-entry" role="listitem">
+Wager, Stefan, Trevor Hastie, and Bradley Efron. 2014. <span>“<span class="nocase">Confidence intervals for random forests: The jackknife and the infinitesimal jackknife</span>.”</span> <em>The Journal of Machine Learning Research</em> 15 (1): 1625–51.
+</div>
+<div id="ref-9463528" class="csl-entry" role="listitem">
+Wang, Qiang, Jiawei Jiang, Yongxin Zhao, Weipeng Cao, Chunjiang Wang, and Shengdong Li. 2021. <span>“<span class="nocase">Algorithm selection for software verification based on adversarial LSTM</span>.”</span> In <em>2021 7th IEEE Intl Conference on Big Data Security on Cloud (BigDataSecurity), IEEE Intl Conference on High Performance and Smart Computing, (HPSC) and IEEE Intl Conference on Intelligent Data and Security (IDS)</em>, 87–92. <a href="https://doi.org/10.1109/BigDataSecurityHPSCIDS52275.2021.00026">https://doi.org/10.1109/BigDataSecurityHPSCIDS52275.2021.00026</a>.
+</div>
+<div id="ref-books/daglib/0030297" class="csl-entry" role="listitem">
+Williamson, David P., and David B. Shmoys. 2011. <em>The Design of Approximation Algorithms.</em> Cambridge University Press.
+</div>
+<div id="ref-gerhard_j__woeginger_2002" class="csl-entry" role="listitem">
+Woeginger, Gerhard J. 2002. <span>“Exact Algorithms for <span class="nocase">NP-hard</span> Problems: A Survey.”</span> In, 185–207. Springer, Berlin, Heidelberg. <a href="https://doi.org/ 10.1007/3-540-36478-1_17 ">https://doi.org/ 10.1007/3-540-36478-1_17 </a>.
+</div>
+<div id="ref-585893" class="csl-entry" role="listitem">
+Wolpert, D. H., and W. G. Macready. 1997. <span>“No Free Lunch Theorems for Optimization.”</span> <em>IEEE Transactions on Evolutionary Computation</em> 1 (1): 67–82. <a href="https://doi.org/10.1109/4235.585893">https://doi.org/10.1109/4235.585893</a>.
+</div>
+<div id="ref-wotzlawpfoliouzk" class="csl-entry" role="listitem">
+Wotzlaw, Andreas, Alexander van der Grinten, Ewald Speckenmeyer, and Stefan Porschen. 2012. <span>“<span class="nocase">pfolioUZK: Solver description</span>.”</span> <em>Balint Et Al.(Balint Et Al., 2012a)</em>, 45.
+</div>
+<div id="ref-ranger" class="csl-entry" role="listitem">
+Wright, Marvin N., and Andreas Ziegler. 2017. <span>“<span class="nocase">ranger</span>: A Fast Implementation of Random Forests for High Dimensional Data in <span>C++</span> and <span>R</span>.”</span> <em>Journal of Statistical Software</em> 77 (1): 1–17. <a href="https://doi.org/10.18637/jss.v077.i01">https://doi.org/10.18637/jss.v077.i01</a>.
+</div>
+<div id="ref-10.5555/2898607.2898641" class="csl-entry" role="listitem">
+Xu, Lin, Holger H. Hoos, and Kevin Leyton-Brown. 2010. <span>“<span class="nocase">Hydra: Automatically Configuring Algorithms for Portfolio-Based Selection</span>.”</span> In <em>Proceedings of the Twenty-Fourth AAAI Conference on Artificial Intelligence</em>, 210–16. AAAI’10 1. AAAI Press.
+</div>
+<div id="ref-satzilla" class="csl-entry" role="listitem">
+Xu, Lin, Frank Hutter, Holger H. Hoos, and Kevin Leyton-Brown. 2008. <span>“<span>SATzilla</span>: Portfolio-Based Algorithm Selection for <span>SAT</span>.”</span> <em>J. Artif. Int. Res.</em> 32 (1): 565–606.
+</div>
+<div id="ref-XuEtAl11" class="csl-entry" role="listitem">
+Xu, Lin, Frank Hutter, Holger H Hoos, and Kevin Leyton-Brown. 2011. <span>“<span class="nocase">Hydra-MIP: Automated algorithm configuration and selection for mixed integer programming</span>.”</span> In <em>Proceedings of the 18th RCRA Workshop</em>, 16–30.
+</div>
+<div id="ref-10.1007/978-3-642-31612-8_18" class="csl-entry" role="listitem">
+Xu, Lin, Frank Hutter, Holger Hoos, and Kevin Leyton-Brown. 2012. <span>“<span class="nocase">Evaluating Component Solver Contributions to Portfolio-Based Algorithm Selectors</span>.”</span> In <em>Theory and Applications of Satisfiability Testing – SAT 2012</em>, edited by Alessandro Cimatti and Roberto Sebastiani, 228–41. Berlin, Heidelberg: Springer Berlin Heidelberg.
+</div>
+<div id="ref-9ae8443ad82b4056bccf7102c0056152" class="csl-entry" role="listitem">
+Yuen, Shiu Yin, Chi Kin Chow, and Xin Zhang. 2013. <span>“<span class="nocase">Which algorithm should I choose at any point of the search: An evolutionary portfolio approach</span>.”</span> In <em>GECCO 2013 - Proceedings of the 2013 Genetic and Evolutionary Computation Conference</em>, 567–74. <a href="https://doi.org/10.1145/2463372.2463435">https://doi.org/10.1145/2463372.2463435</a>.
+</div>
+<div id="ref-YUEN2016654" class="csl-entry" role="listitem">
+Yuen, Shiu Yin, Chi Kin Chow, Xin Zhang, and Yang Lou. 2016. <span>“<span class="nocase">Which algorithm should I choose: An evolutionary algorithm portfolio approach</span>.”</span> <em>Applied Soft Computing</em> 40: 654–73. https://doi.org/<a href="https://doi.org/10.1016/j.asoc.2015.12.021">https://doi.org/10.1016/j.asoc.2015.12.021</a>.
+</div>
+<div id="ref-yuen2019selecting" class="csl-entry" role="listitem">
+Yuen, Shiu Yin, Yang Lou, and Xin Zhang. 2019. <span>“Selecting Evolutionary Algorithms for Black Box Design Optimization Problems.”</span> <em>Soft Computing</em> 23 (15): 6511–31.
+</div>
+<div id="ref-Yun" class="csl-entry" role="listitem">
+Yun, Xi, and Susan L. Epstein. 2012. <span>“Learning Algorithm Portfolios for Parallel Execution.”</span> In <em>Revised Selected Papers of the 6th International Conference on Learning and Intelligent Optimization - Volume 7219</em>, 323–38. LION 6. Paris, France: Springer-Verlag.
+</div>
+<div id="ref-ZHANG1996543" class="csl-entry" role="listitem">
+ZHANG, HANTAO, MARIA PAOLA BONACINA, and JIEH HSIANG. 1996. <span>“<span class="nocase">PSATO: a Distributed Propositional Prover and its Application to Quasigroup Problems</span>.”</span> <em>Journal of Symbolic Computation</em> 21 (4): 543–60. https://doi.org/<a href="https://doi.org/10.1006/jsco.1996.0030">https://doi.org/10.1006/jsco.1996.0030</a>.
+</div>
+<div id="ref-968634" class="csl-entry" role="listitem">
+Zhang, Lintao, C. F. Madigan, M. H. Moskewicz, and S. Malik. 2001. <span>“<span class="nocase">Efficient conflict driven learning in a Boolean satisfiability solver</span>.”</span> In <em>IEEE/ACM International Conference on Computer Aided Design. ICCAD 2001. IEEE/ACM Digest of Technical Papers (Cat. No.01CH37281)</em>, 279–85. <a href="https://doi.org/10.1109/ICCAD.2001.968634">https://doi.org/10.1109/ICCAD.2001.968634</a>.
+</div>
+<div id="ref-707896" class="csl-entry" role="listitem">
+Zhong, Peixin, M. Martonosi, P. Ashar, and S. Malik. 1998. <span>“<span class="nocase">Accelerating Boolean satisfiability with configurable hardware</span>.”</span> In <em><span class="nocase">Proceedings. IEEE Symposium on FPGAs for Custom Computing Machines (Cat. No.98TB100251)</span></em>, 186–95. <a href="https://doi.org/10.1109/FPGA.1998.707896">https://doi.org/10.1109/FPGA.1998.707896</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../chapters/chapter2/Background.html" class="pagination-link" aria-label="Background">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Background</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../chapters/chapter4/AutomaticParallelPortfolioSelection.html" class="pagination-link" aria-label="Automatic Parallel Portfolio Selection">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Automatic Parallel Portfolio Selection</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">nocite:</span><span class="co"> "[@*]"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Is Algorithm Selection Worth It? Comparing Selecting Single</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">  Algorithms and Parallel Execution</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>The material of this chapter is based on the following publication:</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>H. Kashgarani and L. Kotthoff, "Is algorithm selection worth it?</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>comparing selecting single algorithms and parallel execution," in *AAAI</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>Workshop on Meta-Learning and MetaDL Challenge*, vol. 140 of</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>*Proceedings of Machine Learning Research*, pp. 58--64, PMLR, 2021.</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>This chapter provides an empirical evaluation of SAT18-EXP solver</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>performance (from the SAT Competition 2018) when running in parallel</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>with other solvers at different levels of parallelism. Using the</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>collected data, we trained two performance models based on the solver's</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>sequential performance data and instance features. We then performed</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>algorithm selection using these selectors to choose the best-predicted</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>solver for each instance, comparing these results to running multiple</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>solvers in parallel. The findings showed that algorithm selection is</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>superior when many solvers run in parallel. The results in this chapter</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>offer preliminary insights for this dissertation, highlighting the</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>importance of selecting an instance-based subportfolio of solvers since,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>with fewer solvers, the overhead is minimal. The instance based</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>subportfolio approach will be further developed in Chapter 4 and</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>explored with variations in Chapter 5 and 6.</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## Abstract</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>For many practical problems, there is more than one algorithm or</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>approach to solve them. Such algorithms often have complementary</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>performance -- where one fails, another performs well, and vice versa.</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>Per-instance algorithm selection leverages this by employing portfolios</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>of complementary algorithms to solve sets of difficult problems,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>choosing the most appropriate algorithm for each problem instance.</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>However, this requires complex models to effect this selection and</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>introduces overhead to compute the data needed for those models. On the</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>other hand, even basic hardware is more than capable of running several</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>algorithms in parallel. We investigate the tradeoff between selecting a</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>single algorithm and running multiple in parallel and incurring a</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>slowdown because of contention for shared resources. Our results</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>indicate that algorithm selection is worth it, especially for large</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>portfolios.</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>The performance of algorithms can vary significantly on different</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>problem instances and there is no single algorithm that performs well in</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>all cases. We can take advantage of such performance differences and</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>create algorithm portfolios to combine the complementary strengths of</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>different algorithms <span class="co">[</span><span class="ot">@GOMES200143</span><span class="co">]</span>. From this portfolio, we can choose</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>the algorithm with the best performance for each problem instance --</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>this is known as the algorithm selection problem <span class="co">[</span><span class="ot">@Rice1976</span><span class="co">]</span>. This is</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>usually done by using machine learning methods and features extracted</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>from the instances <span class="co">[</span><span class="ot">@Kotthoff2014</span><span class="co">]</span>. Like all machine learning models,</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>such approaches to algorithm selection make mistakes and in some cases</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>choose an algorithm that does not have optimal performance. We can avoid</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>this by exploiting modern multi-core architectures and simply running</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>all algorithms in the portfolio in parallel, see e.g. <span class="co">[</span><span class="ot">@sunnycp2</span><span class="co">]</span>. While</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>in theory optimal in terms of achieved performance, in practice</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>contention for shared resources such as memory and caches reduces</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>overall performance.</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>We present, to the best of our knowledge, the first investigation into</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>the practical implications of running a large number of algorithms in</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>parallel. We show the trade-off between algorithm selection that chooses</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>a single algorithm and exploiting parallel resources and demonstrate</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>that simply running all algorithms in a portfolio in parallel is not a</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>panacea.</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="fu">## Background</span></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>Algorithm selection and other portfolio-based approaches have been</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>applied in many areas of AI to improve performance. The first paper to</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>introduce portfolios for solving hard AI problem considered a relatively</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>simple parallel approach that executes all algorithms in the portfolio</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>at the same time and stops them all as soon as the solution has been</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>found by one <span class="co">[</span><span class="ot">@Huberman1997</span><span class="co">]</span>. <span class="co">[</span><span class="ot">@GOMES200143; @Hamadi2009</span><span class="co">]</span> evaluate this</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>strategy for stochastic algorithms and demonstrate that the variance of</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>the time required to solve a problem decreases as the number of parallel</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>runs increases.</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>This led to further approaches that take advantage of parallel</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>processing by having several algorithms work independently or in</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>cooperation on a given problem instance. <span class="co">[</span><span class="ot">@Yun</span><span class="co">]</span> construct algorithm</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>portfolios for constraint satisfaction problems that are executed in</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>parallel and show performance improvements for up to 16 processors, and</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@sunnycp2</span><span class="co">]</span> propose parallel portfolios with a dynamic schedule for up</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>to 8 cores. Similarly, <span class="co">[</span><span class="ot">@10.5555/1661445.1661516</span><span class="co">]</span> show that by splitting</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>the search space into sub-spaces, constraint solving portfolio</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>approaches can take advantage of as many as 128 processors to achieve</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>performance improvements.</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>For the Boolean satisfiability problem (SAT), simple static hand-crafted</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>parallel portfolios have been studied by <span class="co">[</span><span class="ot">@roussel2012</span><span class="co">]</span> and</span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@wotzlawpfoliouzk</span><span class="co">]</span> combined with a computed resource allocation for</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>each solver. They employ a fixed selection of SAT solvers with good</span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>performance independently in parallel for a given number of cores.</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@gagliolo2006dynamic</span><span class="co">]</span> introduce the dynamic algorithm portfolios that</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>run a portfolio of algorithms with different shares of parallel</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>processors along with an online time allocation learning approach. This</span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>includes a lifelong-learning approach in which the priority of</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>algorithms is continually updated based on new runtime information.</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@petrik2006learning</span><span class="co">]</span> also propose a method for enhancing the</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>performance of deterministic algorithms by running multiple algorithms</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>in parallel for the same problem instance. <span class="co">[</span><span class="ot">@3s; @Malitsky2012</span><span class="co">]</span> propose</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>a more sophisticated approach. They select algorithms through an</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>improved k-nearest-neighbor approach and use both dynamic and static</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>scheduling for multiple algorithms from the portfolio to improve the</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>chance that a particular problem instance will be solved within a time</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>limit.</span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>Similarly, <span class="co">[</span><span class="ot">@Marius2015</span><span class="co">]</span> investigate parallel portfolio selection, and</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@aspeed</span><span class="co">]</span> propose an approach to optimally schedule algorithms from a</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>portfolio using answer set programming, while <span class="co">[</span><span class="ot">@Gonard2019</span><span class="co">]</span> take the</span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>simpler approach of running a small portfolio of algorithms in parallel</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>for a short amount of time and using algorithm selection to tackle any</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>problem instances that remain unsolved after that. To the best of our</span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>knowledge, all previous research has only simulated parallel execution</span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>without measuring the actual performance. We investigate the practical</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>ramifications of running more than one algorithm in parallel.</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a><span class="fu">## Experimental Setup</span></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>We run algorithms sequentially and with varying degrees of parallelism.</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>We build and evaluate algorithm selection models for sequential</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>execution to be able to compare selecting a single algorithm to run</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>multiple in parallel. We measure performance in terms of penalized</span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>average runtime with factor 10 (PAR10) and misclassification penalty</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>(MCP). The PAR10 score is the observed performance unless an algorithm</span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>timed out on a particular instance, when the timeout multiplied by the</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>penalization factor is assumed as the runtime. The misclassification</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>penalty is the difference between the performance of the algorithm that</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>was run and the optimal algorithm on the same instance, i.e. it is</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>always zero for the optimal algorithm.</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>We compare to the virtual best solver (VBS), which is the optimal</span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>algorithm from the portfolio for each problem instance to solve</span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>(cumulative misclassification penalty zero), and the single best solver</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>(SBS), which is the algorithm from the portfolio with the best average</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>performance across the entire set of problem instances to solve. The</span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>performance of the overhead-free parallel portfolio corresponds to the</span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>VBS.</span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>We consider algorithms and problem instances from SAT, a popular</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>application area for algorithm selection. We selected all 400 instances</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>from the main track of the SAT Competition 2018 <span class="co">[</span><span class="ot">@Heule2019</span><span class="co">]</span> and</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>computed their features using the SATzilla feature computation code</span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@satzilla</span><span class="co">]</span>. We exclude 19 instances for which we were unable to extract</span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>features within two hours of computational time, for a total of 381</span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>problem instances.</span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>Our solvers also come from the main track of the 2018 SAT competition;</span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>we consider all 39 submitted solvers for a total of 14,859 algorithm</span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>runs. We use the same time limit as in the SAT competition; 5000 CPU</span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>seconds for solving a single instance. However, we allowed 128 GB of</span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>RAM; more than five times what was allowed in the competition. During</span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>the parallel runs, the total amount of memory is shared among all</span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>running algorithms. We run the algorithms sequentially, 10 in parallel,</span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>20 in parallel, 30 in parallel, and 32 in parallel to fully saturate a</span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>machine with 32 cores.</span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>We leverage the algorithm selection benchmark library ASlib</span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@BISCHL201641</span><span class="co">]</span> and the LLAMA algorithm selection toolkit <span class="co">[</span><span class="ot">@LLAMA</span><span class="co">]</span> for</span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>our algorithm selection experiments. We build regression models that</span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>predict the performance of each algorithm in the portfolio individually</span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>and select the algorithm with the best-predicted performance, and</span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>pairwise regression models that predict the performance difference for</span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>each pair of algorithms and select the algorithm with the aggregated</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>best performance difference. We removed constant-valued (and therefore</span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>irrelevant) instance features and imputed missing feature values as the</span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>mean over all non-missing values of the feature.</span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>For both regression and pairwise regression approaches, we use random</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>forests as the base machine learning models. We tune their</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>hyperparameters following <span class="co">[</span><span class="ot">@BISCHL201641</span><span class="co">]</span>; we consider values of 10 to</span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>200 for the <span class="in">`ntree`</span> hyperparameter and 1 to 30 for <span class="in">`mtry`</span>. We optimize</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>the hyperparameters using random search with 250 iterations and perform</span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>a nested cross-validation with 10 external and three internal folds to</span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>ensure unbiased performance measurements. All other hyperparameters were</span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>left at their default values.</span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>::: table*</span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>  <span class="sc">\#</span> parallel runs     <span class="sc">\#</span> timeouts     <span class="sc">\#</span> out of memory errors</span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>  ------------------ ---------------- -------------------------</span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>  1                     6982 (47%)             0 (0%)</span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>  10                  10281 (69.19%)          6 (0.04%)</span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a>  20                  11853 (79.77%)         20 (0.13%)</span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>  30                  12590 (84.73%)         27 (0.18%)</span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a>  32                  12715 (85.57%)          5 (0.03%)</span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a><span class="fu">## Results</span></span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>::: table*</span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>  metric    <span class="sc">\#</span> parallel runs     VBS        SBS      regression   pairwise regression</span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>  -------- ------------------ ---------- ---------- ------------ ---------------------</span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a>  PAR10            1           9256.089   17585.66    13004.31         12588.44</span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>                   10          13062.16   27251.34    19888.25         20410.18</span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a>                   20          17099.23   33630.54    25233.38         24970.07</span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a>                   30          19970.29   36498.11    28628.15         27317.29</span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>                   32          21674.1    37285.5     29937.23         28888.24</span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>  MCP              1              0       1006.738    441.0526         379.5133</span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a>                   10             0       1433.268    684.2932         733.7837</span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a>                   20             0       1649.426    811.264          784.1721</span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a>                   30             0       1645.936    862.5388         732.7824</span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a>                   32             0       1556.284    822.1427         718.0386</span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>&lt;figure id="fig:values"&gt;</span>
+<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a>&lt;p&gt;&lt;img src="plots/PAR10.jpg" style="width:80.0%" alt="image" /&gt;&lt;br /&gt;</span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a>&lt;img src="plots/MCP.jpg" style="width:80.0%" alt="image" /&gt;&lt;/p&gt;</span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a>&lt;figcaption&gt;Performance in terms of PAR10 score and misclassification</span>
+<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a>penalty for different numbers of algorithms run in parallel. The VBS is</span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a>the performance of the parallel portfolio; SBS is shown for comparison.</span>
+<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a>The regression and pairwise regression bars show the performance of the</span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>respective algorithm selection models. We omit the plot for VBS</span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a>performance in terms of MCP score as it is always zero by</span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a>definition.&lt;/figcaption&gt;</span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a>&lt;/figure&gt;</span>
+<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a>We first evaluate the effect the number of parallel runs has on what</span>
+<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a>fraction of all algorithm runs is successful.</span>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a>Table&nbsp;<span class="co">[</span><span class="ot">\[tab:errors\]</span><span class="co">](#tab:errors)</span>{reference-type="ref"</span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>reference="tab:errors"} shows the number and percentage of unsuccessful</span>
+<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a>runs at each level of parallelism. With only one algorithm running at a</span>
+<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a>time, 47% of runs fail with a timeout. This increases as more and more</span>
+<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a>algorithms are run in parallel. Similarly, the number of runs that fail</span>
+<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a>because they run out of memory increases, as more and more runs share</span>
+<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a>the same amount of physical memory. This does not significantly affect</span>
+<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a>the results though, as even in the worst-case much less than 1% of the</span>
+<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a>total number of runs is affected. Parallel runs have a much more</span>
+<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>significant effect on the number of timeouts though -- from 47% runs</span>
+<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a>that exceeded the available time when only a single algorithm is running</span>
+<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a>at a time, we see an increase to 85.57% of total runs when 32 algorithms</span>
+<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a>are run in parallel. Altogether, 85.6% of runs either time out or run</span>
+<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a>out of memory when 32 algorithms are running in parallel; a significant</span>
+<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a>increase over running only a single algorithm.</span>
+<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a>Table&nbsp;<span class="co">[</span><span class="ot">\[tab:values\]</span><span class="co">](#tab:values)</span>{reference-type="ref"</span>
+<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a>reference="tab:values"} and</span>
+<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a>Figure&nbsp;<span class="co">[</span><span class="ot">1.1</span><span class="co">](#fig:values)</span>{reference-type="ref" reference="fig:values"}</span>
+<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a>show the performance we observed for all parallelism levels and</span>
+<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a>approaches we consider. The PAR10 score for the VBS increases</span>
+<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a>significantly as we increase the number of algorithms run in parallel;</span>
+<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a>$\approx$<span class="in">`&lt;!-- --&gt;`</span>{=html}41% from one to 10 parallel runs. Similarly,</span>
+<span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a>the score for the single best solver increases by</span>
+<span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a>$\approx$<span class="in">`&lt;!-- --&gt;`</span>{=html}55% for the same interval. The PAR10 score is</span>
+<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a>more than twice as high for 32 parallel runs compared to a single run</span>
+<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a>for both VBS and SBS -- contention for shared resources has a</span>
+<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a>significant impact on the time it takes to solve a set of instances. A</span>
+<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a>large contributor to the increase in PAR10 score is the increased number</span>
+<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a>of unsuccessful runs because of timeouts or memory outs.</span>
+<span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a>We observe a similar decrease in performance as for the VBS and SBS for</span>
+<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a>the algorithm selection approaches as the level of parallelism increases</span>
+<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>-- in fact, we observe even steeper performance losses in the beginning,</span>
+<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a>with $\approx$<span class="in">`&lt;!-- --&gt;`</span>{=html}53% performance decrease from one</span>
+<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a>algorithm to 10 for regression models and $\approx$<span class="in">`&lt;!-- --&gt;`</span>{=html}62%</span>
+<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a>for pairwise regression models in terms of PAR10. However, we observe a</span>
+<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a>performance increase for both approaches (lower MCP scores) when going</span>
+<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a>from 30 algorithms run in parallel to 32, and a performance increase for</span>
+<span id="cb1-264"><a href="#cb1-264" aria-hidden="true" tabindex="-1"></a>pairwise regression model when going from 20 algorithms run in parallel</span>
+<span id="cb1-265"><a href="#cb1-265" aria-hidden="true" tabindex="-1"></a>to 30. It is unclear what exactly causes this performance increase; it</span>
+<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a>is likely that the machine learning task that underlies the selection</span>
+<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a>process becomes easier as more algorithms lose competitiveness because</span>
+<span id="cb1-268"><a href="#cb1-268" aria-hidden="true" tabindex="-1"></a>of timeouts and memory limits.</span>
+<span id="cb1-269"><a href="#cb1-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-270"><a href="#cb1-270" aria-hidden="true" tabindex="-1"></a>&lt;figure id="fig:percentage"&gt;</span>
+<span id="cb1-271"><a href="#cb1-271" aria-hidden="true" tabindex="-1"></a>&lt;img src="plots/percentage.jpg" style="width:80.0%"/&gt;</span>
+<span id="cb1-272"><a href="#cb1-272" aria-hidden="true" tabindex="-1"></a>&lt;figcaption&gt;Percentage increase in terms of PAR10 score for running</span>
+<span id="cb1-273"><a href="#cb1-273" aria-hidden="true" tabindex="-1"></a>different numbers of algorithms in parallel compared to algorithm</span>
+<span id="cb1-274"><a href="#cb1-274" aria-hidden="true" tabindex="-1"></a>selector performance for choosing a single algorithm. For example, an</span>
+<span id="cb1-275"><a href="#cb1-275" aria-hidden="true" tabindex="-1"></a>increase of 100% means that running the algorithms in parallel doubles</span>
+<span id="cb1-276"><a href="#cb1-276" aria-hidden="true" tabindex="-1"></a>the PAR10 score over selecting a single algorithm.&lt;/figcaption&gt;</span>
+<span id="cb1-277"><a href="#cb1-277" aria-hidden="true" tabindex="-1"></a>&lt;/figure&gt;</span>
+<span id="cb1-278"><a href="#cb1-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-279"><a href="#cb1-279" aria-hidden="true" tabindex="-1"></a>Our results show that algorithm selection for choosing a single</span>
+<span id="cb1-280"><a href="#cb1-280" aria-hidden="true" tabindex="-1"></a>algorithm to run can beat parallel execution in practice for a large</span>
+<span id="cb1-281"><a href="#cb1-281" aria-hidden="true" tabindex="-1"></a>number of solvers. Figure&nbsp;<span class="co">[</span><span class="ot">1.2</span><span class="co">](#fig:percentage)</span>{reference-type="ref"</span>
+<span id="cb1-282"><a href="#cb1-282" aria-hidden="true" tabindex="-1"></a>reference="fig:percentage"} shows that the performance of both the</span>
+<span id="cb1-283"><a href="#cb1-283" aria-hidden="true" tabindex="-1"></a>regression and pairwise regression algorithm selection approaches are</span>
+<span id="cb1-284"><a href="#cb1-284" aria-hidden="true" tabindex="-1"></a>better than the VBS for any level of parallelism beyond running a single</span>
+<span id="cb1-285"><a href="#cb1-285" aria-hidden="true" tabindex="-1"></a>algorithm. Both in terms of PAR10 and MCP, algorithm selection is always</span>
+<span id="cb1-286"><a href="#cb1-286" aria-hidden="true" tabindex="-1"></a>better than the single best solver. When using all 32 cores we have</span>
+<span id="cb1-287"><a href="#cb1-287" aria-hidden="true" tabindex="-1"></a>available, the VBS becomes more than 66% worse than the regression</span>
+<span id="cb1-288"><a href="#cb1-288" aria-hidden="true" tabindex="-1"></a>algorithm selection approach and more than 72% worse than the pairwise</span>
+<span id="cb1-289"><a href="#cb1-289" aria-hidden="true" tabindex="-1"></a>regression algorithm selection approach. Even when running only 10</span>
+<span id="cb1-290"><a href="#cb1-290" aria-hidden="true" tabindex="-1"></a>algorithms at the same time (and assuming that we know which 10 of the</span>
+<span id="cb1-291"><a href="#cb1-291" aria-hidden="true" tabindex="-1"></a>39 total algorithms to run to maximize performance), the VBS is more</span>
+<span id="cb1-292"><a href="#cb1-292" aria-hidden="true" tabindex="-1"></a>than 0.4% and 3% worse than regression and pairwise regression</span>
+<span id="cb1-293"><a href="#cb1-293" aria-hidden="true" tabindex="-1"></a>approaches, respectively.</span>
+<span id="cb1-294"><a href="#cb1-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-295"><a href="#cb1-295" aria-hidden="true" tabindex="-1"></a>While the overhead-free parallel portfolio promises optimal performance,</span>
+<span id="cb1-296"><a href="#cb1-296" aria-hidden="true" tabindex="-1"></a>in theory, we clearly see that in practice this is not the case --</span>
+<span id="cb1-297"><a href="#cb1-297" aria-hidden="true" tabindex="-1"></a>contention for shared resources and physical limits of the machine that</span>
+<span id="cb1-298"><a href="#cb1-298" aria-hidden="true" tabindex="-1"></a>is used to run the algorithms has a significant detrimental effect on</span>
+<span id="cb1-299"><a href="#cb1-299" aria-hidden="true" tabindex="-1"></a>performance. Even though algorithm selection models are not perfect,</span>
+<span id="cb1-300"><a href="#cb1-300" aria-hidden="true" tabindex="-1"></a>they outperform actual parallel portfolios in terms of observed</span>
+<span id="cb1-301"><a href="#cb1-301" aria-hidden="true" tabindex="-1"></a>performance even for a relatively small number of algorithms run in</span>
+<span id="cb1-302"><a href="#cb1-302" aria-hidden="true" tabindex="-1"></a>parallel.</span>
+<span id="cb1-303"><a href="#cb1-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-304"><a href="#cb1-304" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusions and Future Work</span></span>
+<span id="cb1-305"><a href="#cb1-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-306"><a href="#cb1-306" aria-hidden="true" tabindex="-1"></a>We investigated the actual observed performance of parallel portfolios,</span>
+<span id="cb1-307"><a href="#cb1-307" aria-hidden="true" tabindex="-1"></a>in contrast to their theoretical performance that is usually used in the</span>
+<span id="cb1-308"><a href="#cb1-308" aria-hidden="true" tabindex="-1"></a>literature. We found that running even a relatively small number of</span>
+<span id="cb1-309"><a href="#cb1-309" aria-hidden="true" tabindex="-1"></a>algorithms in parallel on the same machine can have a significant</span>
+<span id="cb1-310"><a href="#cb1-310" aria-hidden="true" tabindex="-1"></a>negative impact on overall performance. Algorithm selection on the other</span>
+<span id="cb1-311"><a href="#cb1-311" aria-hidden="true" tabindex="-1"></a>hand chooses only a single algorithm and is able to achieve better</span>
+<span id="cb1-312"><a href="#cb1-312" aria-hidden="true" tabindex="-1"></a>overall performance, even though its predictions are not perfect and it</span>
+<span id="cb1-313"><a href="#cb1-313" aria-hidden="true" tabindex="-1"></a>does not always choose the algorithm with the best performance for</span>
+<span id="cb1-314"><a href="#cb1-314" aria-hidden="true" tabindex="-1"></a>solving a given problem instance.</span>
+<span id="cb1-315"><a href="#cb1-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-316"><a href="#cb1-316" aria-hidden="true" tabindex="-1"></a>An obvious avenue for future work is a hybrid approach to what we</span>
+<span id="cb1-317"><a href="#cb1-317" aria-hidden="true" tabindex="-1"></a>present here, where instead of a single algorithm several are chosen to</span>
+<span id="cb1-318"><a href="#cb1-318" aria-hidden="true" tabindex="-1"></a>run in parallel. Existing literature proposes a multitude of methods for</span>
+<span id="cb1-319"><a href="#cb1-319" aria-hidden="true" tabindex="-1"></a>doing so; however, none of these approaches have been evaluated as in</span>
+<span id="cb1-320"><a href="#cb1-320" aria-hidden="true" tabindex="-1"></a>the investigation we present here -- by actually running more than one</span>
+<span id="cb1-321"><a href="#cb1-321" aria-hidden="true" tabindex="-1"></a>algorithm in parallel and observing the performance rather than</span>
+<span id="cb1-322"><a href="#cb1-322" aria-hidden="true" tabindex="-1"></a>simulating this based on the performance observed when only a single</span>
+<span id="cb1-323"><a href="#cb1-323" aria-hidden="true" tabindex="-1"></a>algorithm is run at a time. In addition, there is scope for developing</span>
+<span id="cb1-324"><a href="#cb1-324" aria-hidden="true" tabindex="-1"></a>new approaches for dynamic resource allocation for algorithm selection.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p><a href="https://haniyeka.github.io">Website</a> | <a href="https://github.com/haniyeka">GitHub</a> | <a href="https://github.com/uwyo-mallet">UWYO-Mallet</a></p>
+</div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

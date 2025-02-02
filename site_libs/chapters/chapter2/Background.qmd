@@ -1,0 +1,540 @@
+---
+title: Background
+---
+
+Combinatorial problems involve problems whose goal is to find the best
+arrangement or selection from a finite set of items. These problems
+mainly focus on assignment, sorting, selection, and optimization tasks
+such as scheduling and routing. These challenges are common in multiple
+disciplines, such as computer science, operations research,
+bioinformatics, and artificial intelligence [@series/faia/336]. Many
+combinatorial problems fall into the categories of NP-complete or
+NP-hard, meaning they can be significantly computationally expensive.
+
+Common examples of these problems include boolean satisfiability (SAT),
+integer programming (IP), quantified boolean formulas (QBF), constraint
+satisfaction problem (CSP), and any other NP-complete problems like the
+21 Karp NP-complete problems [@Karp1972]. Additionally, NP-hard problems
+such as the traveling salesman (TSP), answer set programming (ASP),
+scheduling, and mixed-integer programming (MIP) fall into this category.
+Over several decades, various algorithms and complex mathematical
+methods have been developed to solve these problems, which mainly deal
+with discrete optimization.
+
+Every year, competitions are held to compare the proposed algorithms.
+For example, the SAT community organized annual SAT competitions to
+evaluate and benchmark algorithms on various tracks and domains
+[@balyo_sat_2017]. Similarly, annual QBF solver evaluations (QBFEVAL),
+MiniZinc Challenge, ASP Competition, and International Planning
+Competition exist, focusing on quantified Boolean formulas, constraint
+programming, ASP and planning solvers, respectively
+[@PULINA2019224; @Stuckey_Feydy_Schutt_Tack_Fischer_2014; @GEBSER_2019; @taitler-et-al-aimag2024].
+
+Many solvers have been proposed and continue to evolve, leading to
+significant improvements in both efficiency and effectiveness. In
+addition to exact solvers [@gerhard_j__woeginger_2002], researchers have
+also explored approximation algorithms [@books/daglib/0030297] and
+heuristics [@10.5555/525] as alternatives to achieve solutions close to
+the optimum, particularly in cases where exact solutions are
+computationally infeasible. These methods often leverage
+problem-specific knowledge to guide the search process, and they often
+sacrifice optimality for speed and produce suboptimal solutions.
+
+Moreover, the inherent difficulty of these problems means that no
+polynomial-time solutions are known, and there is no one-size-fits-all
+solution to solve them. The \"No Free Lunch\" theorem formalizes the
+idea that, when considering every possible problem, no algorithm
+outperforms others on average; they all have equivalent performance
+[@585893]. It is the problem-specific performance that makes some
+algorithms appear to be better suited for certain domains [@585893]. The
+performance of any algorithm is limited by the specific characteristics
+of the problem instance it encounters. The results of
+[@10.1007/978-3-540-30201-8_33] contribute to a deeper understanding of
+the relationship between the characteristics of the instance (that is,
+the number of clauses and variables in the SAT), which is known to
+correlate with the difficulty of the problem.
+
+In the realm of algorithm development, both sequential and parallel
+solvers have been extensively studied. Theoretically, many
+problem-solving approaches were originally sequential. For instance, in
+the SAT domain, Davis-Putnam-Loveland-Logemann (DPLL) algorithm
+[@10.1145/368273.368557] was initially designed to be sequential.
+Sequential solvers generally operate without awareness of available
+resources and do not dynamically adapt to them. The results of
+[@10.1007/978-3-642-16242-8_37] have revealed that the performance and
+efficiency of a sequential solver depend heavily on hardware resources
+and low-level processing. This underscores the need to utilize parallel
+resources in problem-solving to improve the performance.
+
+## Parallel Solvers
+
+Parallel solvers then emerged as multicore architectures became
+increasingly accessible. Initially, the first parallel SAT solvers
+utilized single-core CPUs, with multiple units communicating over a
+network and employing the leader-follower model
+[@holldobler_short_2011]. This approach is showcased by PMSat, a
+parallel version of the sequential MiniSAT solver
+[@journals/jsat/GilFS09], as well as the PSATO solvers [@ZHANG1996543]
+and PaSAT [@SINZ2001205], which introduced search-space partitioning
+between processing units communicating over MPI in distributed systems
+[@10.1007/978-3-642-16242-8_27]. Additionally, advancements in algorithm
+design made the development of parallel solvers possible. For example,
+in the SAT domain, the transition from DPLL solvers to Conflict-Driven
+Clause Learning (CDCL) solvers [@biere2009conflict], divide-and-conquer
+techniques [@lefrioux], and the implementation of restart strategies
+[@10.1007/978-3-540-85110-3_11] facilitated the parallelization of
+existing algorithm designs. These design let the solvers share the
+learned clauses or split search spaces between processing units.
+
+Following the emergence of shared memory architectures, parallel solvers
+started to exploit multicore CPUs with shared memory among cores
+[@10.1007/11752578_46]. Modern parallel solvers inherited the methods
+developed from earlier distributed parallelization approaches. For
+example, the parallel SAT solver, Plingeling [@plingeling], inherits its
+algorithm design from the sequential Lingeling solver and incorporates a
+clause-sharing technique among cores for SAT solving. However, in
+earlier versions of Plingeling, despite using shared-memory systems,
+clauses were copied by each core. As noted in
+[@Biere2013LingelingPA; @conf/sat/AignerBKNP13], the memory used by each
+processing unit was physically separated, leading to an n-fold increase
+in memory usage.
+
+Other solvers, such as the one proposed in
+[@hyvarinen2012approaches; @manthey2011parallel], used a more finer
+granularity in their parallelization approach where multiple cores
+exchange clauses to solve the problem; however, these methods were not
+scalable to a high number of cores and resulted in limited improvement.
+With regard to modern graphical processing unit (GPU) and
+field-programmable gate array (FPGA) computing, several solutions have
+been proposed
+[@10.1007/3-540-44614-1_50; @707896; @4555925; @10.1145/1497561.1497576; @10.1007/s10703-023-00432-z; @11390_1234673; @5547116; @10.1007/978-3-030-72016-2_8].
+However, some have not demonstrated promising results and while some
+show potential, discussions of these solvers are outside the focus of
+this thesis.
+
+Despite all the developments in parallel computing and parallel
+algorithm designs, the transition from sequential to parallel solvers
+remains highly challenging, if not impossible, in some cases. Most
+solvers are originally designed for sequential execution; therefore,
+adapting them to parallel environments often requires a thorough
+understanding of the problem domain, algorithm design, and many core
+systems.
+
+A number of works have shown that this problem can be overcome by
+improving performance without directly developing new solvers. Instead,
+existing solvers can be used and combined in a portfolio, selecting the
+appropriate solver(s) [@Kotthoff2014; @satzilla; @kadiogluwin]. In cases
+where multiple solvers are chosen, they can be run in a schedule, in
+parallel, or in combination with each other to achieve superior
+performance.
+
+<figure id="fig:nativealgselec">
+<div class="lrbox">
+<img src="plots/as.png" style="width:90%"/>
+</div>
+<figcaption>Algorithm Selection using ML models</figcaption>
+</figure>
+
+## Algorithm Selection
+
+Algorithm selection is a meta-algorithmic technique that was first
+introduced by John Rice [@Rice1976] in 1976. The algorithm selection
+problem is strategically choosing the most suitable algorithm from a set
+of candidates to solve a specific problem instance using the features
+and characteristics of the problem instances. This problem is closely
+related to general optimization theory, as both involve finding the best
+solution among a set of options [@Rice1976]. Algorithm selection is an
+important task in optimizing the performance of computationally
+expensive tasks, particularly those that can be translated into
+combinatorial problems [@Kotthoff2014], NP-complete and NP-hard problems
+[@GCP; @10.1109/CEC55065.2022.9870417].
+
+During the last two decades, the algorithm selection problem has
+attracted significant attention from both researchers and practitioners
+as it is relevant in various domains, including high-performance
+computing [@FlorinaOpneMP], sorting [@10.5120/ijca2016910726],
+probabilistic inference [@sotingAS; @KOCAMAZ201394], software validation
+[@10.1007/s10515-020-00270-x], software verification
+[@9463528; @10.1145/3637225], software package dependency management
+[@osti_2223030] and data mining
+[@10.4108/ICST.SIMUTOOLS2009.5659; @10.1145/3411564.3411646]. Algorithm
+selection is also applicable in the fields of meta-learning and
+automated machine learning (AutoML), where the goal is to build a
+meta-model that recommends the best machine learning algorithm,
+configurations and hyper-parameters for a given training task
+[@brazdil2022metalearning; @Vanschoren2019; @hutter2019automated]. In
+algorithm selection problem, the search space is a discrete set of
+algorithms, while in problems such as the hyperparameter optimization
+(HPO) and the combination algorithm selection and hyperparameter
+optimization (CASH) problem [@10.1145/2487575.2487629], the search
+spaces are typically continuous or heterogeneous configuration spaces
+[@brazdil2022metalearning].
+
+Algorithm selection is sometimes known as portfolio-based algorithm
+selection in the literature [@10.5555/2898607.2898641; @XuEtAl11], and
+is used in combination with automatic algorithm configuration. Algorithm
+Configuration is a specialized subset of algorithm selection
+[@10.1007/978-3-319-09584-4_4] in which algorithms with varying
+configuration parameters build a portfolio. The configuration parameters
+of these algorithms are dynamically adjusted based on the problem
+instance. This allows algorithms to adapt to the specifics of a problem,
+potentially improving their performance. This approach involves using
+different configurations of an algorithm to design a portfolio of
+solvers and choose the appropriate algorithm to solve problems. Focusing
+on the literature on algorithm configuration techniques is beyond the
+scope of this chapter.
+
+A traditional approach to address algorithm selection is the
+\"winner-take-all\" or per-set algorithm selection strategy
+[@10.1162/evco_a_00242], where different algorithms are evaluated based
+on their performance across a problem distribution, and the one with the
+lowest average runtime is chosen. However, this per-distribution
+selection often leads to the neglect of algorithms that may not perform
+well on average, but could excel in specific instances
+[@10.5555/1630659.1630927]. Per-instance algorithm selection, however,
+has proven effective in numerous problem solving scenarios
+[@BISCHL201641].
+
+Instance-based selection of an effective algorithm is inherently
+complex, and evaluation of numerous algorithms against various
+performance criteria is needed, which can lead to significant
+computational demands. In addition, the abundance of algorithms designed
+to address different types of problem has underscored the importance of
+developing effective strategies for selecting the best algorithm for a
+given context. The field of algorithm selection has evolved
+significantly to address these challenges and there is a wide choice of
+algorithm selection techniques available in the literature.
+
+One key component of per-instance algorithm selection is feature
+selection. In order to improve the design and selection of algorithms,
+measuring the difficulty of instances and identifying features of the
+instance that contribute to its complexity is a fundamental task
+[@SMITHMILES2012875; @10.1007/978-3-319-32034-2_25]. Different studies
+have concluded that problem instance features contribute distinctively
+to the performance of different solvers. [@10.1007/3-540-46135-3_37]
+used statistical regression models to understand the empirical hardness
+of NP-hard problems, which is believed to help tailor algorithms based
+on the hardness of instances. [@10.1007/978-3-540-30201-8_33] also
+contributed to understanding the impact of the features of SAT instances
+on the difficulty of the problem. In short, the literature pertaining to
+the study of instance features strongly suggests that solvers need to be
+either designed to address a specific instance or carefully selected to
+solve the particular problem.
+
+For various types of problem, numerous studies have focused on
+collecting and identifying features to aid in training performant
+algorithm selectors. In the domain of SAT, works such as
+[@10.1007/978-3-540-30201-8_33; @satzilla; @HUTTER201479] have made
+significant contributions by extracting features from the CNF formulas
+of SAT instances. More recently, [@shavit_et_al] revised the SATzilla
+feature extractor, showing notable performance improvements with the
+updated SAT features. In the field of AI planning, studies such as
+[@howe2000exploiting; @Fawcett_Vallati_Hutter_Hoffmann_Hoos_Leyton-Brown_2014; @roberts2008makes; @cenamor2013learning]
+have contributed by extracting features from the PDDL format of AI
+planning instances. Although most studies focus on instance features,
+some have also explored extracting algorithm-specific features and
+incorporating them into performance model training
+[@pmlr-v188-pulatov22a]. Algorithm selection using machine learning and
+statistical analysis is made possible through the extraction and
+utilization of these features.
+
+Feature selection is only appropriate if its calculation time is
+considerably less than the time needed to run all the algorithms.
+[@Carchrae2005APPLYINGML] explored low-knowledge techniques that focus
+only on observed performance improvement, demonstrating that effective
+algorithm selection does not always require deep domain knowledge and
+complex feature extractions and predictive models. In addition, in
+scenarios where traditional meta-features are hard to obtain, such as
+image segmentation tasks, verification-based approaches could be used
+[@10194439].
+
+There is extensive literature on per-instance algorithm selection
+approaches, developed to resolve various NP-complete and NP-hard
+problems, including SAT, TSP, and other related challenges
+[@satzilla; @10.1007/978-3-642-31612-8_18; @10.1162/evco_a_00215; @Kotthoff2014; @10.1162/evco_a_00242].
+Some methods are offline, where solvers are selected before solving the
+problems (e.g., [@satzilla]), while others are online, where solvers are
+continuously selected during the solving process (e.g.,
+[@arbelaez2009online]).
+
+A large number of studies in the broader literature have examined
+machine learning-based approaches to tackle the algorithm selection
+problem, ranging from simple classifiers to complex ensemble approaches.
+These studies focus on using machine learning algorithms to learn the
+performance mapping from problem instances to algorithms by extracting
+features from instances [@Kotthoff2014]. To name a few,
+[@guo_learning-based_2005] has focused on training two classifiers to
+predict the appropriate exact and approximation algorithms to solve the
+most probable explanation (MPE) problems. Rule-based systems also play a
+role in the literature using rules or decision trees to assign
+algorithms to problem instances based on extracted features
+[@ali2006learning]. [@NIPS2014_7fb8ceb3] considers algorithm selection
+as a special case of metareasoning and proposes a model for human
+cognitive strategy selection to solve the sorting problem.
+
+In the ASLib paper, different regression and classification methods are
+also compared, with the results showing that the RandomForest regression
+is superior to other methods [@BISCHL201641]. Before the implementation
+of the ASLib data format and library, algorithm selection studies were
+scattered and many were unaware of each other, so comparing different
+approaches was challenging due to the absence of a standardized format.
+ASLib was proposed to standardize model training and to collect
+benchmarking data in a structured manner which facilitated comparisons
+[@BISCHL201641]. In response to the need for a fair comparison of
+different algorithm selection methods, the ICON Challenge on Algorithm
+Selection was held in 2015 and 2017 [@LINDAUER201986]. In 2015, the
+Zilla system [@satzilla] was the winner among eight different methods.
+In the 2017 challenge, ASAP.v2 [@Gonard2019] was the overall winner of
+eight other methods. The comparison in this competition was conducted
+using the ASLib format and library.\"
+
+Other efforts exist which have not specifically focused on improving
+algorithm selector choices, but rather on making the decision-making
+process more intuitive or reducing the cost of performance model
+training. Some efforts have aimed to improve the transparency of
+algorithm selection through explainability methods. For example,
+[@explainability] employed iterative feature selection and SHAP analysis
+to explain selection decisions. Additionally, the cost of training
+algorithm selection models can be high due to the need to run candidate
+algorithms on a representative set of training instances.
+[@erdem_ku__2024] reduces training costs by selecting a subset of
+training instances using active learning, with timeout predictors and
+progressively increasing timeouts to further minimize costs.
+[@brighton2002advances] has also focused on instance selection which
+means focusing on choosing a representative set of instances for
+training, which can help identify the most suitable algorithm and
+improve algorithm selector efficiency.
+
+## Algorithm Portfolios and Scheduling
+
+In response to the reality that no single algorithm can effectively
+address all types of problems, the concept of utilizing a portfolio
+emerged [@GOMES200143]. Drawing from the concept of risk diversification
+in finance, as discussed in [@Huberman1997], it is generally wiser to
+distribute investments across multiple options rather than concentrating
+on a single one.
+
+Similarly, to optimize problem solving, an algorithm portfolio includes
+a diverse set of algorithms with complementary performance
+characteristics, ensuring that at least one will be effective in solving
+any given instance. These algorithms often have different probability
+distributions for runtimes. We can leverage their strengths by combining
+them into algorithm portfolio approaches to take advantage of
+differences in probability distributions to enhance overall efficiency
+as proposed by [@GOMES200143; @Gomes1997AlgorithmPD].
+
+Subsequently, this portfolio can be leveraged through various methods to
+use the strengths of multiple algorithms and ultimately reduces risk
+[@GOMES200143; @Huberman1997; @Gomes1997AlgorithmPD; @yuri_malitsky__2014].
+Different portfolio approaches have been proposed to effectively harness
+the capabilities of multiple complementary algorithms. An approach
+already discussed in this chapter is algorithm selection, where the
+objective is to select a single suitable algorithm per instance. Another
+approach, plain portfolio selection, includes some algorithms that can
+be executed in parallel on a multicore machine
+[@p3s; @flexfolio; @aspeed; @ppfolio; @wotzlawpfoliouzk] or sequentially
+on a single processor by splitting the available time between solvers
+[@3s; @lindauer2014algorithm; @flexfolio; @10.5555/2540128.2540217; @satzilla; @cphydra; @sunnycp; @hoos2014claspfolio2advancesalgorithm; @10.5555/3013589.3013607].
+In addition, numerous alternative approaches have been developed to
+enable algorithms in the portfolio to cooperate with each other, such as
+clause sharing, clause exchange, and search space splitting. Ultimately,
+these approaches outperform any individual algorithm.
+
+In the plain sequential portfolio domain, over time, a vast body of
+literature has developed successful sequential portfolio solvers. In
+particular, 3S [@3s] and CSHC [@10.5555/2540128.2540217] both secured
+gold medals in the 2011 and 2013 SAT competitions, respectively.
+SATZilla [@satzilla] won the SAT Challenge 2012, CPHydra [@cphydra] was
+the winner of Intetnational Constraint Solver Competition 2008, and
+Sunny-CP won MiniZinc Challenge in 2015 [@sunnycp]. In addition,
+Claspfolio [@hoos2014claspfolio2advancesalgorithm] earned the gold medal
+in both the ASP 2009 and 2011 competitions, and IBaCOP2
+[@10.5555/3013589.3013607] won the Sequential Satisficing Track in the
+2014 International Planning Competition.
+
+3S [@3s] combines solver selection and scheduling. It trains a
+performance model using K-Nearest Neighbors (KNN) and improves the KNN
+approach with Distance-Based Weighting and Clustering-Based Adaptive
+Neighborhood Size. Additionally, they enhanced the model by integrating
+solver scheduling and testing various approaches such as static
+scheduling, dynamic scheduling, fixed-time scheduling, and semistatic
+scheduling. Semi-static scheduling performed best, where 90% of the time
+was allocated to the solver suggested by the KNN model, and 10% to a
+static solver schedule, which chose the top solvers averaged over all
+instances and allocated time statically.
+
+CSHC [@10.5555/2540128.2540217] selects a portfolio of solvers using a
+classification method known as cost-sensitive hierarchical clustering
+and then sequentially allocates time to each solver. In short, the
+cost-sensitive hierarchical clustering method selects algorithms by
+grouping problem instances based on their features and the cost of
+misclassification. It starts with all instances in one cluster and
+splits them to maximize agreement on the best algorithm within each
+cluster. Clusters with too few instances are discarded, and merging is
+considered if it improves performance.
+
+In SATZilla [@satzilla], seven solvers are selected by manually
+analyzing competition results to identify algorithms that perform best
+on specific subsets of instances. An empirical hardness model, trained
+on instance features, is then used to select the most appropriate solver
+for each instance. Additionally, SATZilla employs presolvers, typically
+two, that run before the main solver, quickly resolving instances that
+are easy to solve. For harder instances which did not get resolved in
+the presolver phase, one solver is chosen from the seven based on the
+model's predictions, and the remaining time is allocated to this solver
+based on its expected performance.
+
+CPHydra [@cphydra] is another sequential algorithm portfolio approach
+designed to solve constraint satisfaction problems using case-based
+reasoning (CBR). CBR is a lazy machine learning method in which no model
+is explicitly trained; instead, the selection is based on past cases and
+experiences. CPHydra uses syntactic features, such as the average and
+maximum domain size, and solver-specific features, including recorded
+search statistics, number of explored nodes, and runtime, which describe
+the problem instance. Subsequently, the KNN algorithm is employed to
+query the top k (with k set to 10) similar cases to the current problem
+instance to choose the dominated solvers. The available CPU time limit
+is then divided among multiple solvers, in contrast to approaches such
+as SATzilla, which rely on a single solver. This division is formulated
+as a small knapsack problem with the aim of maximizing the probability
+of finding a solution. The scheduling is computed to maximize the number
+of similar cases that can be solved using the assigned schedule.
+
+Claspfolio [@10.1007/978-3-642-20895-9_40] considers multiple
+configurations of the clasp ASP solver and uses support vector
+regression (SVR) to select suitable solvers. Claspfolio is composed of
+four key parts: an ASP grounder, gringo; a lightweight clasp solver
+called claspre (which extracts features from the problem instance); a
+scoring mechanism that evaluates clasp configurations based on the
+extracted features; and finally, the configuration with the highest
+score is selected to solve the instance. There is no explicit scheduling
+in the original Claspfolio approach, but it is considered a sequential
+portfolio approach because it selects one solver configuration and runs
+it sequentially. [@hoos2014claspfolio2advancesalgorithm] later
+introduced Claspfolio2, which includes a solver schedule based on a
+pre-solving method. This approach employs a timeout-minimal pre-solving
+schedule using ASPEED [@aspeed], where each solver is assigned a
+specific time budget to solve a given instance. Although ASPEED is
+capable of handling multicore scheduling, Claspfolio2 primarily focuses
+on sequential scheduling, maintaining the original approach's emphasis
+on running solvers one after another.
+
+IBaCOP [@10.5555/3013589.3013607] is a portfolio approach in the
+planning domain. It designs a portfolio by creating a per-instance
+configurable portfolio rather than using a fixed configuration. The
+design process involves selecting a set of planners (five in the
+experiments) to narrow down those likely to perform well for a given
+task. This selection is done using Pareto efficiency, choosing planners
+that offer a balance between different performance criteria without
+being dominated by others. The selected planners are then allocated a
+portion of time on a single processor. IBaCOP [@cenamor2014ibacop] was
+later developed based on the previous version, but more planners were
+included in the method, and a performance prediction model was trained
+instead of using Pareto efficiency for choosing the sub-portfolio,
+making the selection dynamic.
+
+SNNAP [@collautti2013snnap] is a KNN-based approach for solving SAT
+problems that combines supervised and unsupervised learning to create a
+solver portfolio. It uses random forests to predict the runtime of
+solvers on specific instances, and based on these predictions, it
+selects similar instances from the training set using KNN, choosing the
+top-performing solvers predicted to perform well on the given instance.
+The value of k is defined by the user, with the top three solvers being
+selected. SNNAP has been shown to outperform ISAC [@kadioglu2010isac], a
+method for the configuration of algorithm based on instance that
+ultimately selects a single algorithm, in experiments. The available
+time is divided between the selected solvers, and they are run
+sequentially.
+
+Sunny [@sunny] is a portfolio designed to solve constraint satisfaction
+problems (CSP). It uses KNN to select a subset of training instances
+that are closest to the problem at hand. It then computes a schedule of
+solvers that solve the maximum number of instances within a specific
+time limit, allocating a portion of time to each solver to create a
+schedule. It also includes a backup solver to handle exceptional cases.
+Sunny-CP [@sunnycp] is based on Sunny and extends its capabilities to
+handle both CSPs and constraint optimization problems (COPs). Sunny-CP
+includes an improved feature extraction tool compared to Sunny. Both
+Sunny and Sunny-CP are sequential portfolio designs.
+
+AutoFolio [@lindauer2015autofolio] is another effort that integrates
+various algorithm and portfolio selection approaches. It is built on the
+claspfolio2 framework and employs a highly parametric framework for
+algorithm selection. AutoFolio is a general-purpose system,
+incorporating techniques from systems like 3S, ISAC, SATzilla, SNAPP as
+well as multiclass classification, pairwise classification, and various
+regression methods. Unlike many other systems, AutoFolio is not specific
+to any particular problem domain, aiming instead to harness the
+strengths of each algorithm selection approach it includes. However, it
+does not focus on parallel portfolios.
+
+A recent sequential portfolio design is MedleySolver
+[@10.1007/978-3-030-80223-3_31], which is designed to solve
+satisfiability modulo theories (SMT) problems. In this method, multiple
+solvers are selected based on the multi-armed bandit (MAB) framework and
+run sequentially. MAB models a situation where an agent must choose
+between multiple options, balancing the trade-off between exploring new
+solvers and exploiting the best-known solvers for the highest reward.
+MedleySolver essentially provides an ordering for a sequence of SMT
+solvers and splits available time between solvers.
+
+In the domain of parallel portfolio solvers, the Plain Parallel
+Portfolio (PPP) approach involves running multiple solvers on same
+instance in parallel, leveraging multi-core shared memory architectures
+[@conf/sat/AignerBKNP13]. In this approach, sequential solvers are
+treated as \"black boxes\", they do not share any information with each
+other, and as soon as any solver resolves the instance, the entire
+process stops [@conf/sat/AignerBKNP13; @Marius2015]. Some PPP methods
+are static, where the sub-portfolios are selected to run on all problems
+and are not instance-based. Notable examples of static PPP solvers in
+the SAT domain include ManySAT [@Hamadi2009], ppfolio [@ppfolio],
+pfolioUZK [@wotzlawpfoliouzk], with ppfolio excelling in the 2011 SAT
+Competition. The PPP approach typically selects the top solvers that
+consistently outperform others on average. This approach has also been
+used in methods such as SATZilla, where a presolving phase, as mentioned
+above, is employed [@satzilla]. However, this strategy often overlooks
+solvers that, while less dominant overall, may significantly outperform
+the top solvers in specific instances.
+
+To address these limitations, more innovative approaches, such as P3S
+[@p3s], have been introduced. P3S is a parallel version of 3S [@3s] and
+participated in the SAT Challenge 2012. It uses the same method as 3S
+but operates in parallel. ASPEED [@aspeed], a static ASP technique,
+defines a fixed schedule for multiple solvers to run in parallel,
+solving this scheduling problem using answer set programming. Sunny-cp2
+[@sunnycp2] is another approach, a parallel version of Sunny-cp,
+designed for the parallel execution of constraint satisfaction and
+constraint optimization solvers. We will discuss these approaches in
+more detail in Chapter 4, where we introduce another approach in this
+field that surpasses the options currently available in the literature.
+
+ArvandHerd [@10.5555/3007337.3007474] is another example of parallel
+portfolio design, but in planning problems. This method won tracks in
+the 2011 Planning Competition. The portfolio includes multiple
+configurations of two different planners. Typically, on three cores, two
+cores are dedicated to running multiple configurations of the Arvand
+solver, while one core is allocated to LAMA-2008 solver configurations.
+The process starts with one configuration, and if that configuration
+exhausts the memory, the planner restarts with another configuration.
+
+Although there have been many studies on plain portfolio designs, no
+plain portfolio solvers have been accepted into the SAT competition
+since 2020 [@FROLEYKS2021103572]. Prior to 2020, and since the SAT
+Competition 2016, plain portfolio solvers had the opportunity to enter
+the No Limit track where submitting the source code was not required.
+Before 2016, they were accepted as regular solvers, which is why we only
+have gold medalists and winning plain portfolio approaches related to
+competitions before 2016. Cooperative portfolio solvers, on the other
+hand, have been accepted in all tracks, especially in the parallel track
+of the SAT competition. In this portfolio approach, solvers can
+communicate, share learned clauses, or split search spaces to improve
+efficiency and performance.
+
+For example, PRS-parallel, a parallel portfolio solver capable of
+running in distributed environments, supports clause sharing and won the
+parallel track of the 2023 SAT Competition [@sat2023]. PaKis, the
+parallel portfolio solver that won the parallel track of the 2021 SAT
+Competition, relies on different configurations of the Kissat solver but
+does not support information sharing between solvers [@sat2021]. There
+is a vast body of literature on cooperative portfolios, which is beyond
+the scope of this chapter.

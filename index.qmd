@@ -1,0 +1,48 @@
+---
+title: Abstract
+---
+
+::: thesisabstract
+When tackling complex combinatorial and AI problems, algorithms can
+perform very differently on each instance: one might solve it in
+seconds, while another could fail to resolve within the time limit. This
+means that algorithms have inherent performance variability across
+problem instances, resulting in no universally optimal solution. To
+address this, we can take advantage of the complementary performance of
+solvers by including them in an algorithm portfolio. This allows us to
+leverage various portfolio approaches to solve problems more
+efficiently.
+
+One of the most studied portfolio approaches is algorithm selection. In
+this approach, performance models are trained using machine learning
+algorithms and features extracted from instances. Then, a single
+algorithm is chosen through the trained model that is estimated to
+perform well on a specific problem instance. However, selecting a single
+algorithm might be risky, as machine learning could choose an incorrect
+solver. Additionally, the advancement of multicore processing
+technologies provides an opportunity to optimize combinatorial problem
+solving. One approach to take advantage of multicore systems is to run a
+large number of solvers in parallel and halt execution as soon as one
+solver solves the problem. This approach can introduce overhead in
+shared-resource settings, as the more solvers running in parallel, the
+more processors will compete for resources.
+
+This work addresses the limitations of the single-algorithm selection
+and parallel execution approaches by first including a comprehensive
+empirical analysis of solvers executed in parallel and direct
+comparisons of parallel execution versus traditional algorithm selection
+strategies. This comparison reveals that when there are too many solvers
+running in parallel, algorithm selection is a better choice. This study
+also introduces a hybrid model that combines traditional algorithm
+selection with parallel execution, tailored to instance-specific
+features, and utilizes uncertainty in algorithm performance predictions.
+This demonstrated that while algorithm selection generally yields higher
+efficiency, the proposed hybrid approach significantly improves
+performance by selecting a per-instance number of algorithms to execute
+in parallel to make use of parallel processing benefits. In addition, we
+consider alternative approaches similar to the proposed method and show
+that the main approach still works better than those alternatives in
+most cases. These comparisons pave the way for future robust and
+scalable models in automatic parallel portfolio selection.
+:::
+

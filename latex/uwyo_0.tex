@@ -1,0 +1,199 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% This document is part of the set of template files
+%% for the uwyo_thesis style. This is your main file that
+%% helps compile the entire document; each individual chapter
+%% should be a separate file that is brought in using the
+%% "\include{}" commands shown below.
+%%
+%% Step one: rename this file to something specific to you, such as
+%% "Smith_thesis.tex" so your eventaul PDF file will end up having the
+%% name "Smith_thesis.pdf."  You can also rename any individual chapter
+%% files; if you do, be sure to make the appropriate change to the
+%% "\include{}" commands below.
+%%
+%% Important: only *this* file should be compiled by LaTeX.
+%% The individual chapter files are *not* standalone files.
+%%
+%% For interdisciplinary programs such as Neuroscience, see the
+%% special section below
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\documentclass[12pt,oneside,openany]{book}  % single-sided printing
+\documentclass[12pt]{book}                  % double-sided printing
+%% First line above assumes single-sided printing.
+%% For double-sided (duplex) printing use the second line instead.
+%% The duplex printing version is best for your final version of the document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{uwyo_thesis} % the main style file
+%%% Many common packages are already loaded by the style file
+%%% Add any others below
+%\usepackage{??}
+\usepackage{graphicx}
+\usepackage{latexsym}
+\usepackage{array,multirow}
+\usepackage{rotating}
+\usepackage{tabularx}
+\usepackage{setspace}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath,amssymb}
+
+\usepackage{booktabs}
+
+
+%%% Note about your title:
+%%% Due to limitations in the UW Banner system, you may want to limit your
+%%% thesis/dissertation titles to the following:
+%%%  Masters thesis titles:  214 characters including spaces
+%%%  Ph.D. dissertation titles: 208 characters including spaces
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% set these values for your particular document and
+%%% uncomment the lines below as needed
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mastersthesis % uncomment this if a Masters thesis; comment out if PhD
+%\thesisdraft  % uncomment to put time/date/draft stamp in header
+%\renewcommand{\thesisauthorLname}{your last name}
+%\renewcommand{\thesisauthorFMname}{your first name and middle initial}
+%\renewcommand{\thesismonth}{your graduation month}
+%\renewcommand{\thesisyear}{your graduation year}
+%\renewcommand{\thesisDefenseDate}{the exact day you defend your thesis}
+%%% NOTE: you must enter the same title for both \thesistitle and \abstitle below
+% Do not use all upper case! That will be done for you where needed.
+%\renewcommand{\thesistitle}{your document title}
+%\renewcommand{\abstitle}{\ul{your document title}}
+% Must be exactly the same as \thesistitle
+%\renewcommand{\thesisDeptName}{your academic department or interdisciplnary program}
+%\renewcommand{\thesisDeptHead}{name of your academic department head or program chair}
+%\renewcommand{\thesisCollegeName}{your college}
+%\renewcommand{\thesisDeanName}{name of your college Dean}
+%\renewcommand{\thesisDegreeArea}{what your degree is in}
+%\renewcommand{\thesisauthorpreviousdegrees}{any of your previous degrees}
+%\renewcommand{\lstlistlistingname}{my program listings} % if you want an alternate name for the list
+%\renewcommand{\thesisDeptHeadTitle}{Interim Head} % if you're between Dept Heads
+%\renewcommand{\thesisDeanTitle}{Interim Dean} % if you're between Deans
+
+%\renewcommand{\thesisdedication}{your dedication} % no length limit, but don't get carried away!
+
+%%%%%%%% Interdisciplinary programs section %%%%%%%%%%%%%%%%%%%
+%% You need to define things a bit differently:
+%% \renewcommand{\thesisDeptName}{the name of your interdisciplnary program}
+%% \renewcommand{\thesisDeptHead}{name of your interdisciplinary program chair}
+%% \renewcommand{\thesisDeptHeadTitle}{Program Chair}
+%% \renewcommand{\thesisCollegeName}{University of Wyoming}
+%% \renewcommand{\thesisDeanName}{name of the UW Provost}
+%% \renewcommand{\thesisDeanTitle}{Provost}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%% Required: insert your committee member names inside the curly braces
+%%% then uncomment the needed lines
+% \thesisCommitteeChair{}  % this is your advisor
+% \thesisFirstMember{}  % this should be the member *outside* your department
+% \thesisSecondMember{}
+% \thesisThirdMember{}
+% \thesisFourthMember{}
+% \thesisFifthMember{}
+% \thesisSixthMember{}
+% \thesisExternalMember{Carol Danvers}  % a member from another university, not normally used
+% only uncomment the line below if you actually have an external member
+% \thesisExternalTitle{External Member}  % Not normally used
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+% Print initial frontmatter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Generate the committee page.
+%%%  If you want to save a page, you can comment
+%%%  this out for early drafts as it isn't needed
+%%%  until you're ready for the final version.
+%%%
+\thesisCommitteePage
+
+%%% the abstract page
+\begin{thesisabstract}
+
+When tackling complex combinatorial and AI problems, algorithms can perform very differently on each instance: one might solve it in seconds, while another could fail to resolve within the time limit. This means that algorithms have inherent performance variability across problem instances, resulting in no universally optimal solution. To address this, we can take advantage of the complementary performance of solvers by including them in an algorithm portfolio. This allows us to leverage various portfolio approaches to solve problems more efficiently. 
+
+One of the most studied portfolio approaches is algorithm selection. In this approach, performance models are trained using machine learning algorithms and features extracted from instances. Then, a single algorithm is chosen through the trained model that is estimated to perform well on a specific problem instance. However, selecting a single algorithm might be risky, as machine learning could choose an incorrect solver. Additionally, the advancement of multicore processing technologies provides an opportunity to optimize combinatorial problem solving. One approach to take advantage of multicore systems is to run a large number of solvers in parallel and halt execution as soon as one solver solves the problem. This approach can introduce overhead in shared-resource settings, as the more solvers running in parallel, the more processors will compete for resources. 
+
+This work addresses the limitations of the single-algorithm selection and parallel execution approaches by first including a comprehensive empirical analysis of solvers executed in parallel and direct comparisons of parallel execution versus traditional algorithm selection strategies. This comparison reveals that when there are too many solvers running in parallel, algorithm selection is a better choice. This study also introduces a hybrid model that combines traditional algorithm selection with parallel execution, tailored to instance-specific features, and utilizes uncertainty in algorithm performance predictions. This demonstrated that while algorithm selection generally yields higher efficiency, the proposed hybrid approach significantly improves performance by selecting a per-instance number of algorithms to execute in parallel to make use of parallel processing benefits. In addition, we consider alternative approaches similar to the proposed method and show that the main approach still works better than those alternatives in most cases. These comparisons pave the way for future robust and scalable models in automatic parallel portfolio selection. 
+
+\end{thesisabstract}
+
+\thesistitlepage        % print title page
+\thesiscopyrightpage    % print the copyright page
+% comment out line below to eliminate the optional dedication page, if you really can't think of anyone!
+\thesisdedicationpage   % print the dedication page
+
+% Generate and print the lists
+\tableofcontents        % table of contents
+\listoffigures          % List of Figures
+\listoftables           % List of Tables
+% comment out line below if you have no program listings!!!
+% \mylistoflistings      % List of program listings
+
+
+%% acknowledgments section: don't forget to thank your committee
+%% members, any funding sources/grants, even your Mom and Dad if you want
+\begin{thesisacknowledgments}
+
+I want to express my deepest gratitude to all the incredible people who supported me throughout my PhD journey. Their guidance, encouragement, and support were absolutely essential for my academic success. A special thanks goes to my advisor, Dr. Lars Kotthoff, for his unwavering commitment and countless hours of mentorship. The deep knowledge and patience of Dr. Kotthoff have profoundly influenced my work and my development as a researcher. I am also very grateful to my committee members, Dr. John Hitchcock, Dr. Diksha Shukla, Dr. Suresh Muknahallipatna, and Dr. Mike Borowczak. Their insightful feedback and constructive criticism have been invaluable in improving the quality of my dissertation. I must also acknowledge the support of the National Science Foundation, which funded this research through grant \#1813537, and the School of Computing at the University of Wyoming for their support.
+
+Finally, my heartfelt thanks go to my beloved husband, Ahmad. His support, companionship, and love brightened even the toughest days of this journey. His constant encouragement reminded me that I was never alone.
+\end{thesisacknowledgments}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Now this is where your various chapters come in
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Abbreviations is an optional entry, placed either at the front or at the end of the document
+%% Uncomment the line below if you want abbreviations to be part of the front matter, before Chapter 1
+\input{uwyo_abbr_front} % 
+
+% Bring in the chapter files -- \input is more efficient than \include
+\input{uwyo_1} % chapter 1
+\input{uwyo_2} % chapter 2
+\input{uwyo_3} % chapter 3
+\input{uwyo_4} % chapter 4
+\input{uwyo_5} % chapter 5
+\input{uwyo_6} % chapter 6
+\input{uwyo_7} % chapter 6
+% add other chapters here
+
+% change formatting for any appendices
+% comment this out if you have no appendices
+
+\appendix
+\input{uwyo_A} % appendix A
+\input{uwyo_B} % appendix B
+
+%% Uncomment the line below if you want abbreviations to be an appendix, at the end of the document
+%\input{uwyo_C_abbr} % appendix C
+
+
+% Generate the References section using BibTeX. Optionally you
+% can code this by hand (argh!)
+\bibliographystyle{ieeetr} % IEEE standard citation style
+\addcontentsline{toc}{chapter}{\bibname} % make reference section show up in TOC
+
+\begin{spacing}{1.0} % sets line spacing of references
+% reads in the sample BibTex file supplied; change to your bib file name
+\bibliography{sample}
+\end{spacing}
+
+
+%\begin{thesisauthorvita}
+%This is where you put your vita if needed. Not usually used at UW.
+%\end{thesisauthorvita}
+
+
+%% all done!
+\end{document}

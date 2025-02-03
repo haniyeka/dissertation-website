@@ -1,0 +1,214 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% This file can be used to generate a list of symbols, abbreviations, etc.
+%% as part of the front matter, BEFORE Chapter 1.
+%%   For use with theses or dissertations using uwyo_thesis.sty
+%%
+%%   Version: 1.00
+%%   Last modified: 26 August 2019
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter*{Abbreviations, Acronyms, and Symbols}
+\label{Abbreviations}  % for you to be able to refer to this appendix in the main text
+\addcontentsline{toc}{chapter}{Abbreviations, Acronyms, and Symbols} % make this show up in TOC
+
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+{ % begin special environment for abbreviations  -- modify only with great care!
+
+ \setlength{\parindent}{0pt}
+
+%%%%% commands just for this file %%%%%%%%%%%%%%%%%%%%%%%
+ \newcommand{\abbrltr}[1]{% command for letter section
+   \bigskip
+   \framebox{\textbf{#1}}
+   \medskip
+ }
+ \newlength{\abbrwidth}
+ \newlength{\abbrdef}
+ \setlength{\abbrwidth}{0.9in}  % adjust for longest abbreviation
+ \setlength{\abbrdef}{\textwidth}
+ \addtolength{\abbrdef}{-\abbrwidth}
+ \newcommand{\abbr}[2]{% command for an entry
+   \begin{tabular}{p{\abbrwidth}p{\abbrdef}}
+     \textbf{#1} & {#2}
+   \end{tabular}
+
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% start appendix text %%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+This is a partial list of abbreviations, acronyms, and symbols used in the
+text, provided in the hope that it will be helpful to some readers.
+
+\abbrltr{Symbols}
+
+\abbr{$\hat{}$}{Refers to predictions.}
+
+\abbr{$p_{\cap}$}{Threshold for the computed joint probability.}
+
+\abbrltr{Greek Letters}
+
+\abbr{$\mu$}{Mean prediction.}
+
+\abbr{$\sigma$}{Standard deviation of prediction.}
+
+\abbrltr{A}
+
+\abbr{AI}{Artificial Intelligence.}
+
+\abbr{AS}{Algorithm selection.}
+
+\abbr{ASLib}{Algorithm selection library.}
+
+\abbr{ASP}{Answer set programming.}
+
+\abbr{AutoML}{Automated machine learning.}
+
+% \abbrltr{B}
+
+\abbrltr{C}
+
+\abbr{CASH}{Combined algorithm selection and hyperparameter optimization.}
+
+\abbr{CDCL}{Conflict-Driven Clause Learning algorithm.}
+
+\abbr{CNF}{Conjunctive normal form.}
+
+\abbr{COP}{Constraint optimization problem.}
+
+\abbr{CP}{Constraint programming.}
+
+\abbr{CSHS}{Cost-sensitive hierarchical clustering.}
+
+\abbr{CSP}{Constraint satisfaction problem.}
+
+\abbrltr{D}
+
+\abbr{DPLL}{Davis-Putnam-Loveland-Logemann algorithm.}
+
+% \abbrltr{E}
+
+\abbrltr{F}
+
+\abbr{FPGA}{Field-programmable gate array.}
+
+\abbrltr{G}
+
+\abbr{GPU}{Graphical processing unit.}
+
+\abbrltr{H}
+
+\abbr{HPO}{Hyperparameter optimization.}
+
+\abbrltr{I}
+
+\abbr{IP}{Integer programming.}
+
+\abbr{ISA}{Instance-specific ASPEED}
+
+\abbr{ISAC}{Instance-specific algorithm configuration.}
+
+% \abbrltr{J}
+
+\abbrltr{K}
+
+\abbr{KL}{Kullback–Leibler (KL) divergence.}
+
+\abbr{KNN}{K-nearest neighbors.}
+
+\abbrltr{L}
+
+\abbr{LLAMA}{Leveraging learning to automatically manage algorithms.}
+
+\abbrltr{M}
+
+\abbr{MAB}{Multi-armed bandit.}
+
+\abbr{MCP}{Misclassification penalty.}
+
+\abbr{MIP}{Mixed integer programming.}
+
+\abbr{ML}{Machine learning.}
+
+\abbr{MPE}{Most probable explanations}
+
+\abbrltr{N}
+
+\abbr{NP}{Nondeterministic polynomial time.}
+
+\abbr{NFL}{No free lunch theorem.}
+% \abbrltr{O}
+
+\abbrltr{P}
+
+\abbr{PAR2}{Penalized average runtime with factor of 2.}
+
+\abbr{PAR10}{Penalized average runtime with factor of 10.}
+
+\abbr{PDDL}{Planning domain definition language.}
+
+\abbr{PPP}{Plain parallel portfolio.}
+
+\abbrltr{Q}
+
+\abbr{QBF}{Quantified boolean formulas.}
+
+
+\abbrltr{R}
+
+\abbr{RF}{Random forests.}
+
+\abbr{RFJ}{Randomforests model with Jackknife uncertainty method.}
+
+\abbr{RI}{Ranger model with Infinitesimal Jackknife uncertainty method.}
+
+\abbr{RJ}{Ranger model with Jackknife uncertainty method.}
+
+\abbrltr{S}
+
+\abbr{SAT}{Boolean satisfiability problem.}
+
+\abbr{SBS}{Single best solver.}
+
+\abbr{SHAP}{SHapley Additive exPlanations.}
+
+\abbr{SNNAP}{Solver-based nearest
+neighbor for algorithm portfolios.}
+
+\abbr{SMT}{Satisfiability modulo theories.}
+
+\abbr{SVR}{Support vector regression.}
+\abbrltr{T}
+
+\abbr{TSP}{Traveling salesman problem.}
+
+% \abbrltr{U}
+
+\abbrltr{V}
+
+\abbr{VBS}{Virtual best solver.}
+
+% \abbrltr{W}
+
+% \abbrltr{X}
+
+% \abbrltr{Y}
+
+% \abbrltr{Z}
+
+% % % % % % % % % % % % % % % % % % % % % % % % %
+} % end environment for zero \parindent  -- do not remove this curly brace
+
+%\mycleardoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%% end appendix text %%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
